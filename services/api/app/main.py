@@ -1,9 +1,21 @@
 """FastAPI application factory."""
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app_core.settings import get_api_settings
+from app.routers.documents import router as documents_router
+from app_core.settings import get_api_settings, get_shared_settings
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # Fail fast: a misconfigured env should crash at boot, not on first request.
+    get_api_settings()
+    get_shared_settings()
+    yield
 
 
 def create_app() -> FastAPI:
@@ -12,6 +24,7 @@ def create_app() -> FastAPI:
         title="Document Intelligence API",
         version="0.1.0",
         docs_url="/docs",
+        lifespan=lifespan,
     )
     app.add_middleware(
         CORSMiddleware,
@@ -20,6 +33,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.include_router(documents_router)
 
     @app.get("/health")
     def health() -> dict[str, str]:

@@ -6,6 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from app_core.db import normalize_database_url
 from app_core.models import Base
 
 config = context.config
@@ -22,11 +23,7 @@ def _database_url() -> str:
         raise RuntimeError(
             "DATABASE_URL is not set. Export it (Supabase pooled URL) before running migrations."
         )
-    # Supabase hands out postgresql:// — SQLAlchemy needs the driver spelled out
-    # (we standardize on psycopg 3).
-    if url.startswith("postgresql://"):
-        url = url.replace("postgresql://", "postgresql+psycopg://", 1)
-    return url
+    return normalize_database_url(url)
 
 
 def run_migrations_offline() -> None:

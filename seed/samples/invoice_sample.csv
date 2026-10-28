@@ -1,0 +1,5 @@
+Invoice Number,Invoice Date,Supplier,Customer,Subtotal,Tax,Total,Currency
+INV-2026-0001,2026-10-01,Acme Supplies Ltd,Northwind Traders,4500.00,450.00,4950.00,USD
+Item,Qty,Unit Price,Amount
+Widget A,10,350.00,3500.00
+Widget B,10,100.00,1000.00

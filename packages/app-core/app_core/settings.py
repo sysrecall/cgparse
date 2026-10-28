@@ -29,6 +29,7 @@ class ApiSettings(BaseSettings):
     jwt_secret: str = "change-me"
     jwt_expires_minutes: int = 60
     cors_origins: str = "http://localhost:3000"
+    max_upload_mb: int = 200
 
 
 class ProcessingSettings(BaseSettings):
