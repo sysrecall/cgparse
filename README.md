@@ -21,3 +21,9 @@ docs/                  db.md (DDL), api.md, prompts.md
 ## Status
 
 🚧 Scaffold in progress — see build order in `../ARCHITECTURE.md` §16.
+
+## Conventions
+
+- **Commits:** semantic / conventional commits — `type(scope): summary`.
+  Types: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`, `perf`, `ci`.
+  Scopes match services: `api`, `processing`, `web`, `core` (app-core), `repo`.
