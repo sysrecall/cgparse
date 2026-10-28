@@ -17,10 +17,10 @@ class SharedSettings(BaseSettings):
     database_url: str
     redis_url: str
 
-    tigris_endpoint: str = "https://t3.storage.dev"
+    # Tigris object storage via boto3's native AWS_* env-var support:
+    # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_ENDPOINT_URL_S3 / AWS_REGION
+    # are read by botocore automatically — only the bucket name is ours to name.
     tigris_bucket: str
-    tigris_access_key: str
-    tigris_secret_key: str
 
 
 class ApiSettings(BaseSettings):
