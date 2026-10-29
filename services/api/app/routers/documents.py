@@ -18,7 +18,8 @@ router = APIRouter(prefix="/api/v1/documents", tags=["documents"])
 
 
 def get_db() -> Any:
-    yield from session_scope()
+    with session_scope() as session:
+        yield session
 
 
 class UploadItem(BaseModel):

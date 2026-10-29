@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.documents import router as documents_router
+from app.routers.search import router as search_router
 
 
 @asynccontextmanager
@@ -34,6 +35,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(documents_router)
+    app.include_router(search_router)
 
     @app.get("/health")
     def health() -> dict[str, str]:
