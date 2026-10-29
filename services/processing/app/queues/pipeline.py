@@ -23,6 +23,7 @@ from app_core.models.extraction import Extraction
 from app_core.models.line_item import LineItem
 from app_core.models.processing_event import ProcessingEvent
 from app_core.models.text_chunk import TextChunk
+from app_core.models.validation_result import ValidationResult
 from app_core.settings import get_processing_settings
 from celery import chain
 from sqlalchemy import select
@@ -71,23 +72,29 @@ class _PipelineTask(celery_app.Task):
 
 
 @celery_app.task(bind=True, base=_PipelineTask, name="processing.route_document", queue="ocr")
-def route_document(self, document_id: str) -> str:
+def route_document(self, document_id: str, from_stage: str = "parse") -> str:
     doc_id = uuid.UUID(document_id)
+    if from_stage not in ("parse", "extract"):
+        raise ValueError(f"invalid from_stage={from_stage!r}; expected 'parse' or 'extract'")
     with session_scope() as session:
         doc = session.get(Document, doc_id)
         if doc is None:
             raise ValueError(f"document {doc_id} not found")
         doc.status = DocumentStatus.PROCESSING.value
         doc.failure_reason = None  # a re-run clears the previous failure
-        _log_event(session, doc_id, "route", "ok", f"source_kind={doc.source_kind}")
+        _log_event(session, doc_id, "route", "ok", f"source_kind={doc.source_kind} from={from_stage}")
     # The api only ever sends this one task (services stay decoupled) —
-    # route owns dispatching the rest of the chain.
-    chain(
-        parse_document.s(document_id),
-        extract_document.s(),
-        validate_document.s(),
-        index_document.s(),
-    ).apply_async()
+    # route owns dispatching the rest of the chain, from the requested stage.
+    if from_stage == "extract":
+        stages = (extract_document.s(document_id), validate_document.s(), index_document.s())
+    else:
+        stages = (
+            parse_document.s(document_id),
+            extract_document.s(),
+            validate_document.s(),
+            index_document.s(),
+        )
+    chain(*stages).apply_async()
     return document_id
 
 
@@ -151,7 +158,39 @@ def extract_document(self, document_id: str) -> str:
 
             # Idempotency: drop the previous extraction (line_items and
             # validation_results go with it via DB-level ON DELETE CASCADE).
+            # But human corrections must survive a reprocess — capture them first.
+            prior = session.scalars(
+                select(Extraction)
+                .where(Extraction.document_id == doc_id)
+                .order_by(Extraction.created_at.desc())
+            ).first()
+            human_fields: dict[str, dict] = {}
+            human_line_items: list[dict] = []
+            if prior is not None:
+                human_fields = {
+                    name: entry
+                    for name, entry in (prior.fields or {}).items()
+                    if isinstance(entry, dict) and entry.get("source") == "human"
+                }
+                prior_items = [
+                    {
+                        "description": li.description,
+                        "quantity": li.quantity,
+                        "unit_price": li.unit_price,
+                        "amount": li.amount,
+                        "confidence": li.confidence,
+                    }
+                    for li in prior.line_items
+                ]
+                # All-or-nothing: if the operator touched any line item, keep the
+                # whole human set; otherwise the fresh extraction replaces them.
+                if any(
+                    (li.provenance or {}).get("source") == "human" for li in prior.line_items
+                ):
+                    human_line_items = prior_items
+
             session.query(Extraction).filter(Extraction.document_id == doc_id).delete()
+            session.flush()
 
             chunks = session.scalars(
                 select(TextChunk).where(TextChunk.document_id == doc_id).order_by(TextChunk.id)
@@ -164,30 +203,59 @@ def extract_document(self, document_id: str) -> str:
 
             extraction_out = run_extraction(text, structured_columns=columns)
 
+            fields = {name: getattr(extraction_out, name).model_dump()
+                      for name in ("invoice_number", "invoice_date", "supplier_name", "customer_name",
+                                   "subtotal", "tax", "total", "currency")}
+            # Start from the machine's own confidence over its field set...
+            document_confidence = extraction_out.document_confidence
+            # ...then human edits win over anything the machine just produced.
+            fields.update(human_fields)
+            if human_fields:
+                # Confidence covers the merged set once an operator has touched it.
+                confidences = [
+                    entry.get("confidence", 0.0)
+                    for entry in fields.values()
+                    if isinstance(entry, dict) and entry.get("value") is not None
+                ]
+                document_confidence = (
+                    round(sum(confidences) / len(confidences), 4) if confidences else 0.0
+                )
+
             extraction = Extraction(
                 document_id=doc_id,
-                fields={name: getattr(extraction_out, name).model_dump()
-                        for name in ("invoice_number", "invoice_date", "supplier_name", "customer_name",
-                                     "subtotal", "tax", "total", "currency")},
-                document_confidence=extraction_out.document_confidence,
+                fields=fields,
+                document_confidence=document_confidence,
                 extraction_model="heuristics+llm" if get_processing_settings().llm_api_key else "heuristics",
             )
-            for i, item in enumerate(extraction_out.line_items, start=1):
+            source_items = human_line_items or [
+                {
+                    "description": item.description,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "amount": item.amount,
+                    "confidence": item.confidence,
+                }
+                for item in extraction_out.line_items
+            ]
+            items_source = "human" if human_line_items else "machine"
+            for i, item in enumerate(source_items, start=1):
                 session.add(
                     LineItem(
                         extraction=extraction,
                         position=i,
-                        description=item.description,
-                        quantity=item.quantity,
-                        unit_price=item.unit_price,
-                        amount=item.amount,
-                        confidence=item.confidence,
+                        description=item["description"],
+                        quantity=item["quantity"],
+                        unit_price=item["unit_price"],
+                        amount=item["amount"],
+                        confidence=item["confidence"],
+                        provenance={"source": items_source},
                     )
                 )
             session.add(extraction)
             session.flush()
             _log_event(session, doc_id, "extract", "ok",
-                       f"confidence={extraction.document_confidence} items={len(extraction_out.line_items)}")
+                       f"confidence={extraction.document_confidence} items={len(source_items)} "
+                       f"human_fields={len(human_fields)}")
     except Exception as exc:
         with session_scope() as session:
             _fail(session, doc_id, "extract", exc)
@@ -210,6 +278,13 @@ def validate_document(self, document_id: str) -> str:
             ).first()
             if extraction is None:
                 raise ValueError("no extraction to validate")
+
+            # Idempotency: a re-validation (after a correction or reprocess)
+            # replaces prior findings instead of stacking duplicates.
+            session.query(ValidationResult).filter(
+                ValidationResult.extraction_id == extraction.id
+            ).delete()
+            session.flush()
 
             rows, status = run_all(extraction, session)
             for row in rows:

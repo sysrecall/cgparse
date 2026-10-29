@@ -58,7 +58,7 @@ def heuristic_pass(text: str) -> dict[str, FieldOut]:
             if field == "invoice_number" and not re.search(r"\d", value):
                 continue  # a bare word is not an invoice number
             found[field] = FieldOut(
-                value=value, confidence=0.75, source_span={"matched": match.group(0)}
+                value=value, confidence=0.75, source_span={"matched": match.group(0)}, source="heuristic"
             )
             break
     return found
@@ -93,6 +93,7 @@ def extract(text: str, structured_columns: list[str] | None = None) -> Extractio
         if heuristic is not None and heuristic.value is not None:
             merged[field] = heuristic  # boxed evidence beats generation
         elif llm_field.value is not None:
+            llm_field.source = "llm"
             merged[field] = llm_field
         else:
             merged[field] = FieldOut()  # explicit null + 0.0 — never invented

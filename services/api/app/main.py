@@ -7,6 +7,7 @@ from app_core.settings import get_api_settings, get_shared_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.corrections import router as corrections_router
 from app.routers.documents import router as documents_router
 from app.routers.search import router as search_router
 
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(documents_router)
     app.include_router(search_router)
+    app.include_router(corrections_router)
 
     @app.get("/health")
     def health() -> dict[str, str]:

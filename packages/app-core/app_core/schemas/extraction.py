@@ -17,6 +17,9 @@ class FieldOut(BaseModel):
     value: str | float | None = None
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     source_span: dict | None = None
+    # Which producer owns this value: "heuristic" | "llm" | "human".
+    # A reprocess preserves any field whose source is "human".
+    source: str | None = None
 
 
 class LineItemOut(BaseModel):
@@ -91,3 +94,10 @@ def _date_to_iso(v: object) -> str | None:
     except (ValueError, OverflowError):
         pass
     return None
+
+
+# Public aliases — the correction endpoint coerces operator input through the
+# same contract the extractors use, so a manual fix can never store a value the
+# pipeline would have rejected.
+money_to_float = _money_to_float
+date_to_iso = _date_to_iso
