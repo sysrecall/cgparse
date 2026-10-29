@@ -3,9 +3,8 @@
 from functools import lru_cache
 from uuid import UUID
 
-from celery import Celery
-
 from app_core.settings import get_shared_settings
+from celery import Celery
 
 ROUTE_TASK = "processing.route_document"
 

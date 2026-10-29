@@ -8,6 +8,7 @@ Env-var prefixes keep the two services from ever reading each other's secrets:
 
 from functools import lru_cache
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -35,10 +36,17 @@ class ApiSettings(BaseSettings):
 class ProcessingSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="PROC_", env_file=".env", extra="ignore")
 
-    openparser_api_key: str = ""
-    llm_api_key: str = ""
-    llm_base_url: str = "https://openrouter.ai/api/v1"
-    llm_model: str = "openai/gpt-4o-mini"
+    # Accept both the PROC_-prefixed name and the bare names used in .env
+    openparser_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("PROC_OPENPARSER_API_KEY", "OPENPARSER_API_KEY"),
+    )
+    llm_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("PROC_LLM_API_KEY", "LLM_API_KEY"),
+    )
+    llm_base_url: str = "https://integrate.api.nvidia.com/v1"
+    llm_model: str = "openai/gpt-oss-20b"
 
 
 @lru_cache

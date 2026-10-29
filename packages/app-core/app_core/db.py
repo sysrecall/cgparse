@@ -1,6 +1,7 @@
 """Shared SQLAlchemy engine/session helpers for api + processing."""
 
 from collections.abc import Iterator
+from contextlib import contextmanager
 from functools import lru_cache
 
 from sqlalchemy import create_engine
@@ -31,6 +32,7 @@ def get_session_factory() -> sessionmaker[Session]:
     return sessionmaker(bind=get_engine(), expire_on_commit=False)
 
 
+@contextmanager
 def session_scope() -> Iterator[Session]:
     """Context-managed session: commit on success, rollback on error."""
     session = get_session_factory()()

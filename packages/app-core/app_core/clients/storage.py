@@ -41,3 +41,11 @@ def presigned_get(key: str, expires_in: int = 3600) -> str:
 def head(key: str) -> dict:
     settings = get_shared_settings()
     return get_s3_client().head_object(Bucket=settings.tigris_bucket, Key=key)
+
+
+def download(key: str) -> bytes:
+    """Fetch an object. NOTE: loads fully into memory — page-range splitting for
+    1000-page PDFs is a documented follow-up (router splits before calling this)."""
+    settings = get_shared_settings()
+    response = get_s3_client().get_object(Bucket=settings.tigris_bucket, Key=key)
+    return response["Body"].read()

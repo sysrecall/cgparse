@@ -3,11 +3,11 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+from app_core.settings import get_api_settings, get_shared_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.documents import router as documents_router
-from app_core.settings import get_api_settings, get_shared_settings
 
 
 @asynccontextmanager

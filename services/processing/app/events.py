@@ -3,7 +3,6 @@
 import json
 
 import redis
-
 from app_core.settings import get_shared_settings
 
 CHANNEL = "docintel:events"

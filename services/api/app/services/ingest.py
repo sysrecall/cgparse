@@ -6,14 +6,13 @@ import uuid
 from dataclasses import dataclass
 
 import magic
-from fastapi import UploadFile
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
-
 from app_core.clients.storage import upload_stream
 from app_core.models.document import Document
 from app_core.models.enums import DocumentStatus, SourceKind
 from app_core.settings import get_api_settings
+from fastapi import UploadFile
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 CHUNK_SIZE = 1024 * 1024  # 1 MiB
 SNIFF_BYTES = 2048
@@ -46,6 +45,9 @@ def sniff(head: bytes, filename: str) -> tuple[str, SourceKind]:
     mime = magic.from_buffer(head, mime=True)
     if mime in MIME_TO_KIND:
         return mime, MIME_TO_KIND[mime]
+    # XLSX/XLSM are ZIP containers — magic sees "application/zip", the extension disambiguates
+    if mime == "application/zip" and filename.lower().endswith((".xlsx", ".xlsm")):
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", SourceKind.SPREADSHEET
     # Some platforms report CSV as text/plain — fall back to extension.
     if mime in ("text/plain", "application/octet-stream") and filename.lower().endswith(".csv"):
         return "text/csv", SourceKind.CSV

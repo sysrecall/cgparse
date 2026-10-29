@@ -3,15 +3,13 @@
 import uuid
 from typing import Any
 
+from app_core.db import session_scope
+from app_core.models.document import Document
+from app_core.models.enums import DocumentStatus
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-
-from app_core.db import session_scope
-from app_core.models.document import Document
-from app_core.models.enums import DocumentStatus
-from app_core.settings import get_api_settings
 
 from app.services.ingest import ingest_one
 from app.services.queue import enqueue_route
@@ -43,7 +41,6 @@ async def upload_documents(
     if not files:
         raise HTTPException(status_code=422, detail="no files provided")
 
-    settings = get_api_settings()
     items: list[UploadItem] = []
     accepted_ids: list[uuid.UUID] = []
 

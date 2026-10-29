@@ -39,6 +39,9 @@ packages = ["app"]
 line-length = 100
 target-version = "py312"
 
+[tool.ruff.lint]
+extend-ignore = ["B008"]  # FastAPI idiom: Depends/File in argument defaults
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
