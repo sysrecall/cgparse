@@ -1,11 +1,14 @@
 """documents router: upload, list, detail."""
 
 import uuid
+from decimal import Decimal
 from typing import Any
 
 from app_core.db import session_scope
 from app_core.models.document import Document
 from app_core.models.enums import DocumentStatus
+from app_core.models.extraction import Extraction
+from app_core.models.processing_event import ProcessingEvent
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -123,10 +126,19 @@ def list_documents(
 
 @router.get("/{document_id}")
 def get_document(document_id: uuid.UUID, db: Session = Depends(get_db)) -> dict:
+    """Full detail for the review UI: metadata + extraction + line items +
+    validation findings + the processing-event timeline."""
     document = db.get(Document, document_id)
     if document is None:
         raise HTTPException(status_code=404, detail="document not found")
-    return {
+
+    extraction = db.scalars(
+        select(Extraction)
+        .where(Extraction.document_id == document_id)
+        .order_by(Extraction.created_at.desc())
+    ).first()
+
+    payload: dict = {
         "id": str(document.id),
         "original_filename": document.original_filename,
         "mime_type": document.mime_type,
@@ -138,4 +150,59 @@ def get_document(document_id: uuid.UUID, db: Session = Depends(get_db)) -> dict:
         "failure_reason": document.failure_reason,
         "created_at": document.created_at.isoformat(),
         "updated_at": document.updated_at.isoformat(),
+        "extraction": None,
+        "line_items": [],
+        "validation_results": [],
     }
+
+    if extraction is not None:
+        payload["extraction"] = {
+            "id": str(extraction.id),
+            "fields": extraction.fields,
+            "document_confidence": extraction.document_confidence,
+            "extraction_model": extraction.extraction_model,
+            "created_at": extraction.created_at.isoformat(),
+        }
+        payload["line_items"] = [
+            {
+                "id": str(item.id),
+                "position": item.position,
+                "description": item.description,
+                "quantity": _num(item.quantity),
+                "unit_price": _num(item.unit_price),
+                "amount": _num(item.amount),
+                "confidence": item.confidence,
+                "source": (item.provenance or {}).get("source", "machine"),
+            }
+            for item in extraction.line_items
+        ]
+        payload["validation_results"] = [
+            {
+                "rule_id": v.rule_id,
+                "severity": v.severity,
+                "message": v.message,
+                "field": v.field,
+            }
+            for v in extraction.validation_results
+        ]
+
+    events = db.scalars(
+        select(ProcessingEvent)
+        .where(ProcessingEvent.document_id == document_id)
+        .order_by(ProcessingEvent.created_at.asc())
+    ).all()
+    payload["history"] = [
+        {
+            "stage": e.stage,
+            "status": e.status,
+            "detail": e.detail,
+            "created_at": e.created_at.isoformat(),
+        }
+        for e in events
+    ]
+    return payload
+
+
+def _num(value: Decimal | None) -> float | None:
+    """NUMERIC -> float for JSON (2dp money already, rounding is harmless)."""
+    return float(value) if value is not None else None
