@@ -6,9 +6,11 @@ from typing import Any
 
 from app_core.db import session_scope
 from app_core.models.document import Document
+from app_core.models.document_page import DocumentPage
 from app_core.models.enums import DocumentStatus
 from app_core.models.extraction import Extraction
 from app_core.models.processing_event import ProcessingEvent
+from app_core.models.text_chunk import TextChunk
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -206,3 +208,48 @@ def get_document(document_id: uuid.UUID, db: Session = Depends(get_db)) -> dict:
 def _num(value: Decimal | None) -> float | None:
     """NUMERIC -> float for JSON (2dp money already, rounding is harmless)."""
     return float(value) if value is not None else None
+
+
+@router.get("/{document_id}/pages")
+def get_document_pages(document_id: uuid.UUID, db: Session = Depends(get_db)) -> dict:
+    """Per-page source text (pdfplumber or OCR) for the review screen.
+
+    Preview images are not served yet: they need Tigris presigned URLs, which
+    is a separate piece of work. Raw text is enough to verify an extraction.
+    """
+    document = db.get(Document, document_id)
+    if document is None:
+        raise HTTPException(status_code=404, detail="document not found")
+
+    pages = db.scalars(
+        select(DocumentPage)
+        .where(DocumentPage.document_id == document_id)
+        .order_by(DocumentPage.page_number.asc())
+    ).all()
+    chunks = db.scalars(
+        select(TextChunk)
+        .where(TextChunk.document_id == document_id)
+        .order_by(TextChunk.id.asc())
+    ).all()
+    return {
+        "document_id": str(document_id),
+        "page_count": len(pages),
+        "pages": [
+            {
+                "page_number": p.page_number,
+                "raw_text": p.raw_text,
+                "ocr_confidence": p.ocr_confidence,
+            }
+            for p in pages
+        ],
+        # Paged sources expose their text as pages; spreadsheets expose it as
+        # one chunk per row. The UI shows pages when present, else chunks.
+        "chunks": [
+            {
+                "chunk_type": c.chunk_type,
+                "content": c.content,
+                "meta": c.provenance_meta,
+            }
+            for c in chunks
+        ],
+    }
