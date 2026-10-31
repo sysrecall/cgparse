@@ -189,6 +189,14 @@ deletes and re-inserts exactly those rows.
 - `text_chunks.content_tsv` is a generated `tsvector` column; `embedding` is a
   nullable `vector(1536)` (populated when semantic search lands).
 
+## AI usage
+
+[`docs/ai_usage.md`](docs/ai_usage.md) discloses both sides of AI in this project:
+the AI coding agent used to build it (with how its output was verified) and the
+runtime models — OpenParser `paddleocr-vl-1.6` for OCR and NVIDIA NIM
+`openai/gpt-oss-20b` for extraction — including the verbatim prompts, the
+anti-hallucination guardrails and the measured results.
+
 ## Known limitations (v1)
 
 - Semantic search is deferred: `?semantic=true` → `501`; no embeddings are written.
