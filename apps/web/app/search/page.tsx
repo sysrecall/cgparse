@@ -36,6 +36,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
+  const [semantic, setSemantic] = useState(false);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function SearchPage() {
     filters,
     page,
     PAGE_SIZE,
+    semantic,
   );
 
   function updateFilters(patch: Partial<Filters>) {
@@ -78,7 +80,7 @@ export default function SearchPage() {
       <PageHeader
         eyebrow="Find anything"
         title="Search documents"
-        description="Keyword search across document text and filenames, with filters for status, supplier, currency and minimum total."
+        description="Keyword search across document text and filenames, or hybrid semantic search that also matches paraphrases. Filter by status, supplier, currency and minimum total."
       >
         <div className="mt-6">
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -108,6 +110,20 @@ export default function SearchPage() {
                 aria-label="Search documents"
               />
             </div>
+            <button
+              type="button"
+              className={`btn-ghost whitespace-nowrap ${
+                semantic ? "!border-primary !text-primary" : ""
+              }`}
+              onClick={() => {
+                setSemantic((value) => !value);
+                setPage(1);
+              }}
+              aria-pressed={semantic}
+              title="Blend keyword and vector ranking; matches paraphrases as well as exact terms"
+            >
+              Semantic
+            </button>
             <button
               type="button"
               className="btn-ghost whitespace-nowrap"

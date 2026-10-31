@@ -309,10 +309,12 @@ export function useSearch(
   },
   page = 1,
   size = 20,
+  semantic = false,
 ): SWRResponse<SearchResponse, ApiError> {
   const qs = new URLSearchParams({ q: query });
   qs.set("page", String(page));
   qs.set("size", String(size));
+  if (semantic) qs.set("semantic", "true");
   if (filters.status && filters.status !== "all") qs.set("status", filters.status);
   if (filters.supplier) qs.set("supplier", filters.supplier);
   if (filters.minTotal) qs.set("min_total", filters.minTotal);
