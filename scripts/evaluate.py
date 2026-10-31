@@ -544,6 +544,13 @@ def _fmt(value: object, digits: int = 4) -> str:
     return str(value)
 
 
+def _embedding_header() -> str:
+    from app_core.settings import get_embedding_settings
+
+    settings = get_embedding_settings()
+    return f"{settings.model} at {settings.dimensions} dims"
+
+
 def render_report(metadata: dict, metrics: dict, results: list[dict]) -> str:
     fields = metrics["fields"]
     lines = metrics["line_items"]
@@ -555,6 +562,7 @@ def render_report(metadata: dict, metrics: dict, results: list[dict]) -> str:
     out.append("# Evaluation report — document intelligence pipeline\n")
     out.append(f"- **Generated:** {metadata['generated_at']}")
     out.append(f"- **Model:** `{metadata['model']}` (LLM pass {'enabled' if metadata['llm'] else 'disabled'})")
+    out.append(f"- **Embeddings:** `{_embedding_header()}` (index stage)")
     out.append(f"- **Corpus:** {status['total']} documents from `seed/eval/`")
     out.append(f"- **Workers:** {metadata['workers']} · **Database:** dedicated Supabase dev project")
     out.append("")
