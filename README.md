@@ -127,6 +127,16 @@ Set `NEXT_PUBLIC_API_URL` in `apps/web/.env.local` if the API is not on
 
 ---
 
+## Deployment
+
+[`docs/deployment.md`](docs/deployment.md) covers the personal deployment: Render
+for the API and the Celery worker, Vercel for the web app. The Render Blueprint is
+[`render.yaml`](render.yaml) — both services build from the repo root because each
+uv project resolves `app-core` through a relative path, and the worker is the only
+service that can run migrations pre-deploy (the free web plan cannot).
+
+---
+
 ## Tests
 
 Each project owns its suite. DB-marked tests auto-skip unless `TEST_DATABASE_URL`

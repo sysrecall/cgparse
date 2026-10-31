@@ -1,0 +1,92 @@
+# Render Blueprint for the two Python services.
+#
+#   render blueprint validate
+#   render blueprint launch
+#
+# Both services build from the **repo root** on purpose: each uv project resolves
+# app-core through the relative path ../../packages/app-core, so a Render "root
+# directory" of services/api would hide packages/ and break the build. Instead the
+# build/start commands cd into the service themselves.
+#
+# Region is intentionally not set (the workspace default is used). Pick the region
+# closest to your Supabase project if the default is wrong.
+#
+# Secrets are declared with `sync: false`: Render prompts for them when the
+# Blueprint is created and stores them, so no secret is ever committed here.
+# They cannot live in `envVarGroups` — Render rejects `sync: false` inside a group.
+
+services:
+  - type: web
+    name: careguide-api
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install uv && uv sync --frozen --no-dev --project services/api
+    startCommand: cd services/api && uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - fromGroup: careguide-shared
+      # Must be fully qualified; Render rejects a bare "3.12" here.
+      - key: PYTHON_VERSION
+        value: 3.12.11
+      # Safety net so app.main resolves even if the start command's cwd is ignored.
+      - key: PYTHONPATH
+        value: /opt/render/project/src/services/api
+      - key: API_CORS_ORIGINS
+        value: https://careguide-web.vercel.app,http://localhost:3000
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+
+  - type: worker
+    name: careguide-worker
+    runtime: python
+    # Background workers have no free tier; this is the cheapest paid size.
+    plan: 0.5c-512mb
+    branch: main
+    buildCommand: pip install uv && uv sync --frozen --no-dev --project services/processing
+    startCommand: cd services/processing && uv run --no-sync celery -A app.celery_app:celery_app worker -Q ocr,llm --concurrency=2 --loglevel=info
+    # Let in-flight OCR/LLM tasks finish on redeploy instead of being killed at 30s.
+    # Pairs with task_acks_late=True, so an interrupted task is redelivered, not lost.
+    maxShutdownDelaySeconds: 300
+    # Migrations live here because free web services cannot run pre-deploy commands.
+    preDeployCommand: cd packages/app-core && uv run --no-sync alembic upgrade head
+    envVars:
+      - fromGroup: careguide-shared
+      - key: PYTHON_VERSION
+        value: 3.12.11
+      - key: PYTHONPATH
+        value: /opt/render/project/src/services/processing
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: PROC_OPENPARSER_API_KEY
+        sync: false
+      - key: PROC_LLM_API_KEY
+        sync: false
+
+envVarGroups:
+  - name: careguide-shared
+    envVars:
+      - key: AWS_ENDPOINT_URL_S3
+        value: https://t3.storage.dev
+      - key: AWS_REGION
+        value: auto
+      - key: TIGRIS_BUCKET
+        value: careguide
+      - key: PROC_LLM_BASE_URL
+        value: https://integrate.api.nvidia.com/v1
+      - key: PROC_LLM_MODEL
+        value: openai/gpt-oss-20b
+      - key: API_MAX_UPLOAD_MB
+        value: "200"
