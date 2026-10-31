@@ -10,7 +10,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app_core.models.base import Base, UUIDPk
 from app_core.models.enums import ChunkType
 
-# Dimension must match the embedding model (text-embedding-3-small = 1536).
+# Must match the embedding model's requested width (see EmbeddingSettings):
+# nvidia/nemotron-3.5-embed-1b is natively 2048-wide, requested at 1536.
 EMBEDDING_DIM = 1536
 
 
