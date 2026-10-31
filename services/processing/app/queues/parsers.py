@@ -33,7 +33,10 @@ def parse_csv(data: bytes, filename: str) -> list[dict]:
 
 def parse_xlsx(data: bytes, filename: str) -> list[dict]:
     chunks: list[dict] = []
-    book = pd.read_excel(io.BytesIO(data), sheet_name=None, dtype=str, engine="openpyxl")
+    # keep_default_na=False: an empty cell is "", not the literal string "nan".
+    book = pd.read_excel(
+        io.BytesIO(data), sheet_name=None, dtype=str, engine="openpyxl", keep_default_na=False
+    )
     for sheet_name, df in book.items():
         headers = [str(h).strip() for h in df.columns]
         for i, row in enumerate(df.itertuples(index=False), start=1):

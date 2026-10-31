@@ -11,6 +11,7 @@ from decimal import Decimal
 from app_core.models.enums import Severity
 from app_core.models.extraction import Extraction
 from app_core.models.validation_result import ValidationResult
+from app_core.schemas.extraction import money_to_float
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -34,10 +35,12 @@ def _field_value(fields: dict, name: str) -> object:
 
 
 def _dec(value: object) -> Decimal | None:
-    try:
-        return Decimal(str(value))
-    except Exception:  # noqa: BLE001 — anything unparseable is "not numeric"
-        return None
+    # Heuristic money values are literal strings ("$4,500.00"); run them through
+    # the same coercion the extraction contract uses so commas/symbols are fine.
+    if isinstance(value, Decimal):
+        return value
+    parsed = money_to_float(value)
+    return Decimal(str(parsed)) if parsed is not None else None
 
 
 def rule_missing_fields(fields: dict) -> list[RuleResult]:
