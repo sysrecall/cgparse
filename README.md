@@ -78,6 +78,10 @@ dev project** via `TEST_DATABASE_URL`. It is aliased to `DATABASE_URL` inside th
 test process, and the DB-marked tests truncate every table before each test — so
 **never** point it at a database you care about.
 
+The web app does not read the repo-root `.env`; it has its own
+`apps/web/.env.local`, which only needs `NEXT_PUBLIC_API_URL` when the API is not
+on `http://localhost:8000`.
+
 ## Install
 
 ```bash
@@ -118,7 +122,8 @@ cd apps/web && pnpm dev
 - UI: <http://localhost:3000>
 - API docs: <http://localhost:8000/docs>
 
-Set `NEXT_PUBLIC_API_URL` if the API is not on `http://localhost:8000`.
+Set `NEXT_PUBLIC_API_URL` in `apps/web/.env.local` if the API is not on
+`http://localhost:8000`.
 
 ---
 
