@@ -14,6 +14,7 @@ from app_core.models.extraction import Extraction
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import Numeric, cast, func, select, text
+from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/v1/search", tags=["search"])
@@ -147,7 +148,7 @@ def search(
     if supplier or min_total is not None or currency:
         newest = (
             select(Extraction.document_id, Extraction.fields)
-            .distinct(Extraction.document_id)
+            .ext(distinct_on(Extraction.document_id))
             .order_by(Extraction.document_id, Extraction.created_at.desc())
             .subquery()
         )
