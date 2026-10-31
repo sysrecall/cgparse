@@ -1,0 +1,7 @@
+# Root lint config for files outside the three Python projects (scripts/, seed/).
+# Each project carries its own [tool.ruff] block, which takes precedence for its files.
+line-length = 100
+target-version = "py312"
+
+[lint]
+extend-ignore = ["B008"]  # FastAPI idiom: Depends/File in argument defaults

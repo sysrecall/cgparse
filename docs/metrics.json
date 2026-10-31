@@ -1,0 +1,2053 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-30T11:19:44+00:00",
+    "model": "openai/gpt-oss-20b",
+    "llm": true,
+    "workers": 4,
+    "corpus": 31
+  },
+  "fields": {
+    "documents_evaluated": 29,
+    "per_field": {
+      "invoice_number": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "invoice_date": {
+        "total": 29,
+        "exact": 28,
+        "fuzzy": 28,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 0.9655,
+        "fuzzy_accuracy": 0.9655,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "supplier_name": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "customer_name": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 1,
+        "predicted_null": 1,
+        "null_tp": 1,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": 1.0,
+        "null_recall": 1.0,
+        "hallucination_rate": 0.0
+      },
+      "subtotal": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "tax": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "total": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 0,
+        "predicted_null": 0,
+        "null_tp": 0,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": null,
+        "null_recall": null,
+        "hallucination_rate": null
+      },
+      "currency": {
+        "total": 29,
+        "exact": 29,
+        "fuzzy": 29,
+        "expected_null": 1,
+        "predicted_null": 1,
+        "null_tp": 1,
+        "null_fp": 0,
+        "null_fn": 0,
+        "hallucinated": 0,
+        "exact_accuracy": 1.0,
+        "fuzzy_accuracy": 1.0,
+        "null_precision": 1.0,
+        "null_recall": 1.0,
+        "hallucination_rate": 0.0
+      }
+    },
+    "macro_exact_accuracy": 0.9957,
+    "macro_fuzzy_accuracy": 0.9957
+  },
+  "line_items": {
+    "expected_items": 45,
+    "extracted_items": 45,
+    "matched_items": 45,
+    "recall": 1.0,
+    "precision": 1.0,
+    "docs_with_expected_items": 28,
+    "docs_all_items_matched": 28,
+    "field_accuracy": {
+      "description": 1.0,
+      "quantity": 1.0,
+      "unit_price": 1.0,
+      "amount": 1.0
+    }
+  },
+  "validation": {
+    "true_positives": 7,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "per_rule": {
+      "type_and_format": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "missing_field": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "line_items_sum": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "duplicate_invoice": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "subtotal_tax_total": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      }
+    }
+  },
+  "status": {
+    "total": 31,
+    "validated": 24,
+    "needs_review": 5,
+    "failed": 2,
+    "success_rate": 0.7742,
+    "review_rate": 0.1613,
+    "failure_rate": 0.0645,
+    "expected_status_accuracy": 1.0,
+    "failures": [
+      {
+        "filename": "eval_corrupt_csv_01.csv",
+        "edge_case": "empty_file_failure",
+        "error": "parse: EmptyDataError: No columns to parse from file"
+      },
+      {
+        "filename": "eval_corrupt_csv_02.csv",
+        "edge_case": "blank_file_failure",
+        "error": "parse: EmptyDataError: No columns to parse from file"
+      }
+    ]
+  },
+  "timing": {
+    "wall_seconds": 228.17,
+    "documents": 31,
+    "throughput_docs_per_second": 0.1359,
+    "per_stage_seconds": {
+      "parse": {
+        "count": 31,
+        "p50": 2.197,
+        "p95": 5.845
+      },
+      "extract": {
+        "count": 29,
+        "p50": 12.89,
+        "p95": 27.171
+      },
+      "validate": {
+        "count": 29,
+        "p50": 1.992,
+        "p95": 2.792
+      },
+      "index": {
+        "count": 29,
+        "p50": 1.053,
+        "p95": 1.468
+      }
+    },
+    "per_document_seconds": {
+      "p50": 18.624,
+      "p95": 31.77,
+      "max": 58.683
+    },
+    "llm_tokens": {
+      "calls": 30,
+      "prompt_tokens": 16246,
+      "completion_tokens": 14619,
+      "total_tokens": 30865,
+      "tokens_per_document": 995.6
+    }
+  },
+  "documents": [
+    {
+      "filename": "eval_clean_csv_01.csv",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1001",
+        "invoice_date": "2026-10-01",
+        "supplier_name": "Acme Supplies Ltd",
+        "customer_name": "Northwind Traders",
+        "subtotal": 200.0,
+        "tax": 20.0,
+        "total": 220.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1001",
+        "invoice_date": "2026-10-01",
+        "supplier_name": "Acme Supplies Ltd",
+        "customer_name": "Northwind Traders",
+        "subtotal": "200.00",
+        "tax": "20.00",
+        "total": "220.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Widget",
+          "quantity": 2,
+          "unit_price": 50.0,
+          "amount": 100.0
+        },
+        {
+          "description": "Bolt",
+          "quantity": 4,
+          "unit_price": 25.0,
+          "amount": 100.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Widget",
+          "quantity": 2.0,
+          "unit_price": 50.0,
+          "amount": 100.0
+        },
+        {
+          "description": "Bolt",
+          "quantity": 4.0,
+          "unit_price": 25.0,
+          "amount": 100.0
+        }
+      ],
+      "timings": {
+        "parse": 2.5463301579998188,
+        "extract": 21.47758022400012,
+        "validate": 1.8401455500002157,
+        "index": 1.0326389900001232
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_csv_02.csv",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1002",
+        "invoice_date": "2026-10-02",
+        "supplier_name": "Beta Logistics GmbH",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 2050.0,
+        "tax": 205.0,
+        "total": 2255.0,
+        "currency": "EUR"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1002",
+        "invoice_date": "2026-10-02",
+        "supplier_name": "Beta Logistics GmbH",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "2050.00",
+        "tax": "205.00",
+        "total": "2255.00",
+        "currency": "EUR"
+      },
+      "expected_line_items": [
+        {
+          "description": "Pallet screws",
+          "quantity": 500,
+          "unit_price": 4.1,
+          "amount": 2050.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Pallet screws",
+          "quantity": 500.0,
+          "unit_price": 4.1,
+          "amount": 2050.0
+        }
+      ],
+      "timings": {
+        "parse": 1.5738222330001008,
+        "extract": 27.17132158200002,
+        "validate": 2.280563153000003,
+        "index": 0.9929537970001547
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_csv_03.csv",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1003",
+        "invoice_date": "2026-10-03",
+        "supplier_name": "Gamma Manufacturing",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 860.0,
+        "tax": 86.0,
+        "total": 946.0,
+        "currency": "GBP"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1003",
+        "invoice_date": "2026-10-03",
+        "supplier_name": "Gamma Manufacturing",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "860.00",
+        "tax": "86.00",
+        "total": "946.00",
+        "currency": "GBP"
+      },
+      "expected_line_items": [
+        {
+          "description": "Steel brackets",
+          "quantity": 200,
+          "unit_price": 3.5,
+          "amount": 700.0
+        },
+        {
+          "description": "Rivets",
+          "quantity": 1000,
+          "unit_price": 0.12,
+          "amount": 120.0
+        },
+        {
+          "description": "Washers",
+          "quantity": 500,
+          "unit_price": 0.08,
+          "amount": 40.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Steel brackets",
+          "quantity": 200.0,
+          "unit_price": 3.5,
+          "amount": 700.0
+        },
+        {
+          "description": "Washers",
+          "quantity": 500.0,
+          "unit_price": 0.08,
+          "amount": 40.0
+        },
+        {
+          "description": "Rivets",
+          "quantity": 1000.0,
+          "unit_price": 0.12,
+          "amount": 120.0
+        }
+      ],
+      "timings": {
+        "parse": 2.6880518980001398,
+        "extract": 24.53597672900014,
+        "validate": 1.8225198840000303,
+        "index": 0.9939275950000592
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_comma_money_csv_04.csv",
+      "edge_case": "comma_money",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1004",
+        "invoice_date": "2026-10-04",
+        "supplier_name": "Copper Works Inc",
+        "customer_name": "Northwind Traders",
+        "subtotal": 4500.0,
+        "tax": 450.0,
+        "total": 4950.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1004",
+        "invoice_date": "2026-10-04",
+        "supplier_name": "Copper Works Inc",
+        "customer_name": "Northwind Traders",
+        "subtotal": "4,500.00",
+        "tax": "450.00",
+        "total": "4,950.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Copper wire spool",
+          "quantity": 25,
+          "unit_price": 80.0,
+          "amount": 2000.0
+        },
+        {
+          "description": "Insulation tape roll",
+          "quantity": 50,
+          "unit_price": 50.0,
+          "amount": 2500.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Insulation tape roll",
+          "quantity": 50.0,
+          "unit_price": 50.0,
+          "amount": 2500.0
+        },
+        {
+          "description": "Copper wire spool",
+          "quantity": 25.0,
+          "unit_price": 80.0,
+          "amount": 2000.0
+        }
+      ],
+      "timings": {
+        "parse": 2.5274456440001813,
+        "extract": 53.34947189600007,
+        "validate": 1.82034707899993,
+        "index": 0.985280141000203
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_missing_tax_csv_05.csv",
+      "edge_case": "missing_tax",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1005",
+        "invoice_date": "2026-10-05",
+        "supplier_name": "Delta Foods LLC",
+        "customer_name": "Adventure Works",
+        "subtotal": 540.0,
+        "tax": 0.0,
+        "total": 540.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1005",
+        "invoice_date": "2026-10-05",
+        "supplier_name": "Delta Foods LLC",
+        "customer_name": "Adventure Works",
+        "subtotal": "540.00",
+        "tax": "0.00",
+        "total": "540.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Olive oil case",
+          "quantity": 12,
+          "unit_price": 45.0,
+          "amount": 540.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Olive oil case",
+          "quantity": 12.0,
+          "unit_price": 45.0,
+          "amount": 540.0
+        }
+      ],
+      "timings": {
+        "parse": 1.6834478839996336,
+        "extract": 9.540075247000004,
+        "validate": 2.2675875159998213,
+        "index": 0.9716672210001889
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_us_date_csv_06.csv",
+      "edge_case": "us_date",
+      "expected_status": "needs_review",
+      "actual_status": "needs_review",
+      "failure_reason": null,
+      "expected_rules": [
+        "type_and_format"
+      ],
+      "actual_rules": [
+        "type_and_format"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1006",
+        "invoice_date": "2026-10-06",
+        "supplier_name": "Epsilon Trading Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": 350.0,
+        "tax": 35.0,
+        "total": 385.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1006",
+        "invoice_date": "10/06/2026",
+        "supplier_name": "Epsilon Trading Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": "350.00",
+        "tax": "35.00",
+        "total": "385.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Laptop stand",
+          "quantity": 10,
+          "unit_price": 35.0,
+          "amount": 350.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Laptop stand",
+          "quantity": 10.0,
+          "unit_price": 35.0,
+          "amount": 350.0
+        }
+      ],
+      "timings": {
+        "parse": 1.601841013000012,
+        "extract": 8.977709871000116,
+        "validate": 2.107790763999674,
+        "index": 0.9657557380000981
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_missing_currency_csv_07.csv",
+      "edge_case": "missing_currency",
+      "expected_status": "needs_review",
+      "actual_status": "needs_review",
+      "failure_reason": null,
+      "expected_rules": [
+        "missing_field"
+      ],
+      "actual_rules": [
+        "missing_field"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1007",
+        "invoice_date": "2026-10-07",
+        "supplier_name": "Zeta Components",
+        "customer_name": "Northwind Traders",
+        "subtotal": 660.0,
+        "tax": 66.0,
+        "total": 726.0,
+        "currency": null
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1007",
+        "invoice_date": "2026-10-07",
+        "supplier_name": "Zeta Components",
+        "customer_name": "Northwind Traders",
+        "subtotal": "660.00",
+        "tax": "66.00",
+        "total": "726.00",
+        "currency": null
+      },
+      "expected_line_items": [
+        {
+          "description": "Gearbox",
+          "quantity": 3,
+          "unit_price": 220.0,
+          "amount": 660.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Gearbox",
+          "quantity": 3.0,
+          "unit_price": 220.0,
+          "amount": 660.0
+        }
+      ],
+      "timings": {
+        "parse": 2.395291860999805,
+        "extract": 12.890269911999894,
+        "validate": 1.992236006999974,
+        "index": 0.9793494199998349
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_no_line_items_csv_08.csv",
+      "edge_case": "no_line_items",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-1008",
+        "invoice_date": "2026-10-08",
+        "supplier_name": "Eta Services",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 500.0,
+        "tax": 50.0,
+        "total": 550.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-1008",
+        "invoice_date": "2026-10-08",
+        "supplier_name": "Eta Services",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "500.00",
+        "tax": "50.00",
+        "total": "550.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [],
+      "actual_line_items": [],
+      "timings": {
+        "parse": 1.4324456629997258,
+        "extract": 12.195743583999956,
+        "validate": 2.167338987000221,
+        "index": 0.9930943859999388
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_xlsx_01.xlsx",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2001",
+        "invoice_date": "2026-10-09",
+        "supplier_name": "Theta Materials",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 1300.0,
+        "tax": 130.0,
+        "total": 1430.0,
+        "currency": "GBP"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2001",
+        "invoice_date": "2026-10-09",
+        "supplier_name": "Theta Materials",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "1300.00",
+        "tax": "130.00",
+        "total": "1430.00",
+        "currency": "GBP"
+      },
+      "expected_line_items": [
+        {
+          "description": "Aluminium sheet",
+          "quantity": 20,
+          "unit_price": 30.0,
+          "amount": 600.0
+        },
+        {
+          "description": "Copper rod",
+          "quantity": 15,
+          "unit_price": 40.0,
+          "amount": 600.0
+        },
+        {
+          "description": "Brass fitting",
+          "quantity": 5,
+          "unit_price": 20.0,
+          "amount": 100.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Copper rod",
+          "quantity": 15.0,
+          "unit_price": 40.0,
+          "amount": 600.0
+        },
+        {
+          "description": "Brass fitting",
+          "quantity": 5.0,
+          "unit_price": 20.0,
+          "amount": 100.0
+        },
+        {
+          "description": "Aluminium sheet",
+          "quantity": 20.0,
+          "unit_price": 30.0,
+          "amount": 600.0
+        }
+      ],
+      "timings": {
+        "parse": 3.974464264999824,
+        "extract": 10.365931895000358,
+        "validate": 1.8092864330001248,
+        "index": 1.7277337549999174
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_xlsx_02.xlsx",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2002",
+        "invoice_date": "2026-10-10",
+        "supplier_name": "Iota Hardware",
+        "customer_name": "Northwind Traders",
+        "subtotal": 730.0,
+        "tax": 73.0,
+        "total": 803.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2002",
+        "invoice_date": "2026-10-10",
+        "supplier_name": "Iota Hardware",
+        "customer_name": "Northwind Traders",
+        "subtotal": "730.00",
+        "tax": "73.00",
+        "total": "803.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Hammer",
+          "quantity": 30,
+          "unit_price": 12.0,
+          "amount": 360.0
+        },
+        {
+          "description": "Screwdriver set",
+          "quantity": 20,
+          "unit_price": 18.5,
+          "amount": 370.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Hammer",
+          "quantity": 30.0,
+          "unit_price": 12.0,
+          "amount": 360.0
+        },
+        {
+          "description": "Screwdriver set",
+          "quantity": 20.0,
+          "unit_price": 18.5,
+          "amount": 370.0
+        }
+      ],
+      "timings": {
+        "parse": 1.6080334200000834,
+        "extract": 23.74909770300019,
+        "validate": 2.3245736250000846,
+        "index": 0.9736180710001463
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_multiline_xlsx_03.xlsx",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2003",
+        "invoice_date": "2026-10-11",
+        "supplier_name": "Kappa Supplies",
+        "customer_name": "Adventure Works",
+        "subtotal": 960.0,
+        "tax": 96.0,
+        "total": 1056.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2003",
+        "invoice_date": "2026-10-11",
+        "supplier_name": "Kappa Supplies",
+        "customer_name": "Adventure Works",
+        "subtotal": "960.00",
+        "tax": "96.00",
+        "total": "1056.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Cable reel",
+          "quantity": 8,
+          "unit_price": 95.0,
+          "amount": 760.0
+        },
+        {
+          "description": "Connector",
+          "quantity": 40,
+          "unit_price": 5.0,
+          "amount": 200.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Cable reel",
+          "quantity": 8.0,
+          "unit_price": 95.0,
+          "amount": 760.0
+        },
+        {
+          "description": "Connector",
+          "quantity": 40.0,
+          "unit_price": 5.0,
+          "amount": 200.0
+        }
+      ],
+      "timings": {
+        "parse": 2.016158708000148,
+        "extract": 18.97437104599976,
+        "validate": 2.838293569999678,
+        "index": 1.158782828999847
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_line_sum_xlsx_04.xlsx",
+      "edge_case": "line_items_sum",
+      "expected_status": "needs_review",
+      "actual_status": "needs_review",
+      "failure_reason": null,
+      "expected_rules": [
+        "line_items_sum"
+      ],
+      "actual_rules": [
+        "line_items_sum"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2004",
+        "invoice_date": "2026-10-12",
+        "supplier_name": "Lambda Parts",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 100.0,
+        "tax": 10.0,
+        "total": 110.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2004",
+        "invoice_date": "2026-10-12",
+        "supplier_name": "Lambda Parts",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "100.00",
+        "tax": "10.00",
+        "total": "110.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Part A",
+          "quantity": 1,
+          "unit_price": 60.0,
+          "amount": 60.0
+        },
+        {
+          "description": "Part B",
+          "quantity": 1,
+          "unit_price": 30.0,
+          "amount": 30.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Part B",
+          "quantity": 1.0,
+          "unit_price": 30.0,
+          "amount": 30.0
+        },
+        {
+          "description": "Part A",
+          "quantity": 1.0,
+          "unit_price": 60.0,
+          "amount": 60.0
+        }
+      ],
+      "timings": {
+        "parse": 1.6084891519999474,
+        "extract": 17.479252178000024,
+        "validate": 2.7915243560000818,
+        "index": 1.1850934959998085
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_duplicate_a_xlsx_05.xlsx",
+      "edge_case": "duplicate_pair_first",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [
+        "duplicate_invoice"
+      ],
+      "actual_rules": [
+        "duplicate_invoice"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-DUP-9001",
+        "invoice_date": "2026-10-13",
+        "supplier_name": "Duplicate Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": 300.0,
+        "tax": 30.0,
+        "total": 330.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-DUP-9001",
+        "invoice_date": "2026-10-13",
+        "supplier_name": "Duplicate Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": "300.00",
+        "tax": "30.00",
+        "total": "330.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Repeated item",
+          "quantity": 1,
+          "unit_price": 300.0,
+          "amount": 300.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Repeated item",
+          "quantity": 1.0,
+          "unit_price": 300.0,
+          "amount": 300.0
+        }
+      ],
+      "timings": {
+        "parse": 1.6812557830003243,
+        "extract": 7.966864935000103,
+        "validate": 2.4239529649998985,
+        "index": 1.0769261519999418
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_long_date_xlsx_06.xlsx",
+      "edge_case": "long_date",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2006",
+        "invoice_date": "2026-10-05",
+        "supplier_name": "Mu Trading",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 300.0,
+        "tax": 30.0,
+        "total": 330.0,
+        "currency": "EUR"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2006",
+        "invoice_date": "2026-10-05",
+        "supplier_name": "Mu Trading",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "300.00",
+        "tax": "30.00",
+        "total": "330.00",
+        "currency": "EUR"
+      },
+      "expected_line_items": [
+        {
+          "description": "Sensor",
+          "quantity": 4,
+          "unit_price": 75.0,
+          "amount": 300.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Sensor",
+          "quantity": 4.0,
+          "unit_price": 75.0,
+          "amount": 300.0
+        }
+      ],
+      "timings": {
+        "parse": 1.4979607049999686,
+        "extract": 16.089159294999718,
+        "validate": 2.6630486509998264,
+        "index": 1.0782810539999446
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_xlsx_07.xlsx",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-2007",
+        "invoice_date": "2026-10-14",
+        "supplier_name": "Nu Components",
+        "customer_name": "Adventure Works",
+        "subtotal": 348.0,
+        "tax": 34.8,
+        "total": 382.8,
+        "currency": "CHF"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-2007",
+        "invoice_date": "2026-10-14",
+        "supplier_name": "Nu Components",
+        "customer_name": "Adventure Works",
+        "subtotal": "348.00",
+        "tax": "34.80",
+        "total": "382.80",
+        "currency": "CHF"
+      },
+      "expected_line_items": [
+        {
+          "description": "Bearing",
+          "quantity": 12,
+          "unit_price": 22.0,
+          "amount": 264.0
+        },
+        {
+          "description": "Seal ring",
+          "quantity": 24,
+          "unit_price": 3.5,
+          "amount": 84.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Bearing",
+          "quantity": 12.0,
+          "unit_price": 22.0,
+          "amount": 264.0
+        },
+        {
+          "description": "Seal ring",
+          "quantity": 24.0,
+          "unit_price": 3.5,
+          "amount": 84.0
+        }
+      ],
+      "timings": {
+        "parse": 1.7926678489998267,
+        "extract": 8.642189601000155,
+        "validate": 2.619434070000352,
+        "index": 1.4680799939997087
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_pdf_01.pdf",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3001",
+        "invoice_date": "2026-10-15",
+        "supplier_name": "Xi Industries",
+        "customer_name": "Northwind Traders",
+        "subtotal": 2500.0,
+        "tax": 225.0,
+        "total": 2725.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3001",
+        "invoice_date": "2026-10-15",
+        "supplier_name": "Xi Industries",
+        "customer_name": "Northwind Traders",
+        "subtotal": "2500.00",
+        "tax": "225.00",
+        "total": "2725.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Copper wire spool",
+          "quantity": 25,
+          "unit_price": 80.0,
+          "amount": 2000.0
+        },
+        {
+          "description": "Insulation tape roll",
+          "quantity": 40,
+          "unit_price": 12.5,
+          "amount": 500.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Copper wire spool",
+          "quantity": 25.0,
+          "unit_price": 80.0,
+          "amount": 2000.0
+        },
+        {
+          "description": "Insulation tape roll",
+          "quantity": 40.0,
+          "unit_price": 12.5,
+          "amount": 500.0
+        }
+      ],
+      "timings": {
+        "parse": 1.8033753830000023,
+        "extract": 8.401003425999988,
+        "validate": 1.9800739880001856,
+        "index": 1.0784794280002643
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_pdf_02.pdf",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3002",
+        "invoice_date": "2026-10-16",
+        "supplier_name": "Omicron Ltd",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 900.0,
+        "tax": 90.0,
+        "total": 990.0,
+        "currency": "EUR"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3002",
+        "invoice_date": "2026-10-16",
+        "supplier_name": "Omicron Ltd",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "900.00",
+        "tax": "90.00",
+        "total": "990.00",
+        "currency": "EUR"
+      },
+      "expected_line_items": [
+        {
+          "description": "Hydraulic pump",
+          "quantity": 2,
+          "unit_price": 450.0,
+          "amount": 900.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Hydraulic pump",
+          "quantity": 2.0,
+          "unit_price": 450.0,
+          "amount": 900.0
+        }
+      ],
+      "timings": {
+        "parse": 1.8709906619997128,
+        "extract": 13.30624620000026,
+        "validate": 1.9666231599999264,
+        "index": 1.0597895270002482
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_multipage_pdf_03.pdf",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3003",
+        "invoice_date": "2026-10-17",
+        "supplier_name": "Pi Engineering",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 400.0,
+        "tax": 40.0,
+        "total": 440.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3003",
+        "invoice_date": "2026-10-17",
+        "supplier_name": "Pi Engineering",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "400.00",
+        "tax": "40.00",
+        "total": "440.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Motor mount",
+          "quantity": 4,
+          "unit_price": 55.0,
+          "amount": 220.0
+        },
+        {
+          "description": "Drive belt",
+          "quantity": 6,
+          "unit_price": 18.0,
+          "amount": 108.0
+        },
+        {
+          "description": "Pulley",
+          "quantity": 8,
+          "unit_price": 9.0,
+          "amount": 72.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Motor mount",
+          "quantity": 4.0,
+          "unit_price": 55.0,
+          "amount": 220.0
+        },
+        {
+          "description": "Drive belt",
+          "quantity": 6.0,
+          "unit_price": 18.0,
+          "amount": 108.0
+        },
+        {
+          "description": "Pulley",
+          "quantity": 8.0,
+          "unit_price": 9.0,
+          "amount": 72.0
+        }
+      ],
+      "timings": {
+        "parse": 2.218094032999943,
+        "extract": 13.402983226000288,
+        "validate": 1.9251875139998447,
+        "index": 1.077560663999975
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_multipage_pdf_04.pdf",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3004",
+        "invoice_date": "2026-10-18",
+        "supplier_name": "Rho Systems",
+        "customer_name": "Adventure Works",
+        "subtotal": 1000.0,
+        "tax": 100.0,
+        "total": 1100.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3004",
+        "invoice_date": "2026-10-18",
+        "supplier_name": "Rho Systems",
+        "customer_name": "Adventure Works",
+        "subtotal": "1000.00",
+        "tax": "100.00",
+        "total": "1100.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Server rack",
+          "quantity": 2,
+          "unit_price": 350.0,
+          "amount": 700.0
+        },
+        {
+          "description": "Patch panel",
+          "quantity": 5,
+          "unit_price": 60.0,
+          "amount": 300.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Server rack",
+          "quantity": 2.0,
+          "unit_price": 350.0,
+          "amount": 700.0
+        },
+        {
+          "description": "Patch panel",
+          "quantity": 5.0,
+          "unit_price": 60.0,
+          "amount": 300.0
+        }
+      ],
+      "timings": {
+        "parse": 2.5379197219999696,
+        "extract": 7.8092278710000755,
+        "validate": 2.389793945999827,
+        "index": 1.0532309590003024
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_arithmetic_pdf_05.pdf",
+      "edge_case": "arithmetic_mismatch",
+      "expected_status": "needs_review",
+      "actual_status": "needs_review",
+      "failure_reason": null,
+      "expected_rules": [
+        "subtotal_tax_total"
+      ],
+      "actual_rules": [
+        "subtotal_tax_total"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3005",
+        "invoice_date": "2026-10-19",
+        "supplier_name": "Sigma Tools",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 100.0,
+        "tax": 10.0,
+        "total": 120.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3005",
+        "invoice_date": "2026-10-19",
+        "supplier_name": "Sigma Tools",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "100.00",
+        "tax": "10.00",
+        "total": "120.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Drill bit set",
+          "quantity": 3,
+          "unit_price": 33.333,
+          "amount": 100.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Drill bit set",
+          "quantity": 3.0,
+          "unit_price": 33.33,
+          "amount": 100.0
+        }
+      ],
+      "timings": {
+        "parse": 1.792517577000126,
+        "extract": 7.411899943999742,
+        "validate": 2.1422304529996836,
+        "index": 1.0665487379997103
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_no_tax_pdf_06.pdf",
+      "edge_case": "missing_tax",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3006",
+        "invoice_date": "2026-10-20",
+        "supplier_name": "Tau Supplies",
+        "customer_name": "Northwind Traders",
+        "subtotal": 200.0,
+        "tax": 0.0,
+        "total": 200.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3006",
+        "invoice_date": "2026-10-20",
+        "supplier_name": "Tau Supplies",
+        "customer_name": "Northwind Traders",
+        "subtotal": "200.00",
+        "tax": "0.00",
+        "total": "200.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Safety gloves",
+          "quantity": 50,
+          "unit_price": 4.0,
+          "amount": 200.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Safety gloves",
+          "quantity": 50.0,
+          "unit_price": 4.0,
+          "amount": 200.0
+        }
+      ],
+      "timings": {
+        "parse": 2.8954859190002935,
+        "extract": 7.238771209000333,
+        "validate": 1.8816224679999323,
+        "index": 1.0729046300002665
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_duplicate_b_pdf_07.pdf",
+      "edge_case": "duplicate_pair_second",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [
+        "duplicate_invoice"
+      ],
+      "actual_rules": [
+        "duplicate_invoice"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-DUP-9001",
+        "invoice_date": "2026-10-13",
+        "supplier_name": "Duplicate Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": 300.0,
+        "tax": 30.0,
+        "total": 330.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-DUP-9001",
+        "invoice_date": "2026-10-13",
+        "supplier_name": "Duplicate Co",
+        "customer_name": "Northwind Traders",
+        "subtotal": "300.00",
+        "tax": "30.00",
+        "total": "330.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Repeated item",
+          "quantity": 1,
+          "unit_price": 300.0,
+          "amount": 300.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Repeated item",
+          "quantity": 1.0,
+          "unit_price": 300.0,
+          "amount": 300.0
+        }
+      ],
+      "timings": {
+        "parse": 1.8050832500002798,
+        "extract": 13.79244230500035,
+        "validate": 2.1453777070000797,
+        "index": 1.0825522850000198
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_missing_customer_pdf_08.pdf",
+      "edge_case": "missing_customer",
+      "expected_status": "needs_review",
+      "actual_status": "needs_review",
+      "failure_reason": null,
+      "expected_rules": [
+        "missing_field"
+      ],
+      "actual_rules": [
+        "missing_field"
+      ],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3008",
+        "invoice_date": "2026-10-21",
+        "supplier_name": "Upsilon Ltd",
+        "customer_name": null,
+        "subtotal": 150.0,
+        "tax": 15.0,
+        "total": 165.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3008",
+        "invoice_date": "2026-10-21",
+        "supplier_name": "Upsilon Ltd",
+        "customer_name": null,
+        "subtotal": "150.00",
+        "tax": "15.00",
+        "total": "165.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Valve",
+          "quantity": 10,
+          "unit_price": 15.0,
+          "amount": 150.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Valve",
+          "quantity": 10.0,
+          "unit_price": 15.0,
+          "amount": 150.0
+        }
+      ],
+      "timings": {
+        "parse": 1.975401829999555,
+        "extract": 16.48170961300002,
+        "validate": 2.1436759329999404,
+        "index": 1.0565763929998866
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_pdf_09.pdf",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-3009",
+        "invoice_date": "2026-10-22",
+        "supplier_name": "Phi Manufacturing",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 370.0,
+        "tax": 37.0,
+        "total": 407.0,
+        "currency": "CAD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-3009",
+        "invoice_date": "2026-10-22",
+        "supplier_name": "Phi Manufacturing",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "370.00",
+        "tax": "37.00",
+        "total": "407.00",
+        "currency": "CAD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Bracket",
+          "quantity": 100,
+          "unit_price": 2.5,
+          "amount": 250.0
+        },
+        {
+          "description": "Fastener",
+          "quantity": 400,
+          "unit_price": 0.3,
+          "amount": 120.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Bracket",
+          "quantity": 100.0,
+          "unit_price": 2.5,
+          "amount": 250.0
+        },
+        {
+          "description": "Fastener",
+          "quantity": 400.0,
+          "unit_price": 0.3,
+          "amount": 120.0
+        }
+      ],
+      "timings": {
+        "parse": 2.19671571400022,
+        "extract": 14.047441776999676,
+        "validate": 1.9713682569999946,
+        "index": 1.013198850000208
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_png_01.png",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-4001",
+        "invoice_date": "2026-10-23",
+        "supplier_name": "Chi Foods LLC",
+        "customer_name": "Northwind Traders",
+        "subtotal": 540.0,
+        "tax": 54.0,
+        "total": 594.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-4001",
+        "invoice_date": "2026-10-23",
+        "supplier_name": "Chi Foods LLC",
+        "customer_name": "Northwind Traders",
+        "subtotal": "540.00",
+        "tax": "54.00",
+        "total": "594.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Olive oil case",
+          "quantity": 12,
+          "unit_price": 45.0,
+          "amount": 540.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Olive oil case",
+          "quantity": 12.0,
+          "unit_price": 45.0,
+          "amount": 540.0
+        }
+      ],
+      "timings": {
+        "parse": 8.07657667400008,
+        "extract": 8.198088531000394,
+        "validate": 1.9530203270001039,
+        "index": 1.1015777720003825
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_png_02.png",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-4002",
+        "invoice_date": "2026-10-24",
+        "supplier_name": "Psi Textiles",
+        "customer_name": "Adventure Works",
+        "subtotal": 310.0,
+        "tax": 31.0,
+        "total": 341.0,
+        "currency": "GBP"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-4002",
+        "invoice_date": "2026-10-24",
+        "supplier_name": "Psi Textiles",
+        "customer_name": "Adventure Works",
+        "subtotal": "310.00",
+        "tax": "31.00",
+        "total": "341.00",
+        "currency": "GBP"
+      },
+      "expected_line_items": [
+        {
+          "description": "Cotton roll",
+          "quantity": 10,
+          "unit_price": 22.0,
+          "amount": 220.0
+        },
+        {
+          "description": "Thread spool",
+          "quantity": 30,
+          "unit_price": 3.0,
+          "amount": 90.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Cotton roll",
+          "quantity": 10.0,
+          "unit_price": 22.0,
+          "amount": 220.0
+        },
+        {
+          "description": "Thread spool",
+          "quantity": 30.0,
+          "unit_price": 3.0,
+          "amount": 90.0
+        }
+      ],
+      "timings": {
+        "parse": 5.844804140999713,
+        "extract": 23.031893711000066,
+        "validate": 1.9086295709998922,
+        "index": 0.9849841619998188
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_png_03.png",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-4003",
+        "invoice_date": "2026-10-25",
+        "supplier_name": "Omega Foods",
+        "customer_name": "Contoso GmbH",
+        "subtotal": 250.0,
+        "tax": 25.0,
+        "total": 275.0,
+        "currency": "EUR"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-4003",
+        "invoice_date": "2026-10-25",
+        "supplier_name": "Omega Foods",
+        "customer_name": "Contoso GmbH",
+        "subtotal": "250.00",
+        "tax": "25.00",
+        "total": "275.00",
+        "currency": "EUR"
+      },
+      "expected_line_items": [
+        {
+          "description": "Coffee beans",
+          "quantity": 20,
+          "unit_price": 12.5,
+          "amount": 250.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Coffee beans",
+          "quantity": 20.0,
+          "unit_price": 12.5,
+          "amount": 250.0
+        }
+      ],
+      "timings": {
+        "parse": 5.700520245000007,
+        "extract": 10.544096857999648,
+        "validate": 1.919230854000034,
+        "index": 1.0175568429999657
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_png_04.png",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-4004",
+        "invoice_date": "2026-10-26",
+        "supplier_name": "Alpha Hardware",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": 255.0,
+        "tax": 25.5,
+        "total": 280.5,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-4004",
+        "invoice_date": "2026-10-26",
+        "supplier_name": "Alpha Hardware",
+        "customer_name": "Fabrikam Inc",
+        "subtotal": "255.00",
+        "tax": "25.50",
+        "total": "280.50",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Nail box",
+          "quantity": 15,
+          "unit_price": 8.0,
+          "amount": 120.0
+        },
+        {
+          "description": "Screw box",
+          "quantity": 15,
+          "unit_price": 9.0,
+          "amount": 135.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Nail box",
+          "quantity": 15.0,
+          "unit_price": 8.0,
+          "amount": 120.0
+        },
+        {
+          "description": "Screw box",
+          "quantity": 15.0,
+          "unit_price": 9.0,
+          "amount": 135.0
+        }
+      ],
+      "timings": {
+        "parse": 5.434531160000006,
+        "extract": 9.289576683000178,
+        "validate": 1.9203155440000046,
+        "index": 1.0424622720001935
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_clean_png_05.png",
+      "edge_case": "clean",
+      "expected_status": "validated",
+      "actual_status": "validated",
+      "failure_reason": null,
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": "INV-2026-4005",
+        "invoice_date": "2026-10-27",
+        "supplier_name": "Omega Foods",
+        "customer_name": "Northwind Traders",
+        "subtotal": 440.0,
+        "tax": 44.0,
+        "total": 484.0,
+        "currency": "USD"
+      },
+      "actual_fields": {
+        "invoice_number": "INV-2026-4005",
+        "invoice_date": "2026-10-27",
+        "supplier_name": "Omega Foods",
+        "customer_name": "Northwind Traders",
+        "subtotal": "440.00",
+        "tax": "44.00",
+        "total": "484.00",
+        "currency": "USD"
+      },
+      "expected_line_items": [
+        {
+          "description": "Sugar sack",
+          "quantity": 40,
+          "unit_price": 11.0,
+          "amount": 440.0
+        }
+      ],
+      "actual_line_items": [
+        {
+          "description": "Sugar sack",
+          "quantity": 40.0,
+          "unit_price": 11.0,
+          "amount": 440.0
+        }
+      ],
+      "timings": {
+        "parse": 6.2634364819996335,
+        "extract": 9.684390865000296,
+        "validate": 1.966382276999866,
+        "index": 1.0049938530000873
+      },
+      "error": null
+    },
+    {
+      "filename": "eval_corrupt_csv_01.csv",
+      "edge_case": "empty_file_failure",
+      "expected_status": "failed",
+      "actual_status": "failed",
+      "failure_reason": "parse: EmptyDataError: No columns to parse from file",
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": null,
+        "invoice_date": null,
+        "supplier_name": null,
+        "customer_name": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "currency": null
+      },
+      "actual_fields": {
+        "invoice_number": null,
+        "invoice_date": null,
+        "supplier_name": null,
+        "customer_name": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "currency": null
+      },
+      "expected_line_items": [],
+      "actual_line_items": [],
+      "timings": {
+        "parse": 2.9874217350002255
+      },
+      "error": "parse: EmptyDataError: No columns to parse from file"
+    },
+    {
+      "filename": "eval_corrupt_csv_02.csv",
+      "edge_case": "blank_file_failure",
+      "expected_status": "failed",
+      "actual_status": "failed",
+      "failure_reason": "parse: EmptyDataError: No columns to parse from file",
+      "expected_rules": [],
+      "actual_rules": [],
+      "expected_fields": {
+        "invoice_number": null,
+        "invoice_date": null,
+        "supplier_name": null,
+        "customer_name": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "currency": null
+      },
+      "actual_fields": {
+        "invoice_number": null,
+        "invoice_date": null,
+        "supplier_name": null,
+        "customer_name": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "currency": null
+      },
+      "expected_line_items": [],
+      "actual_line_items": [],
+      "timings": {
+        "parse": 2.5675722289997793
+      },
+      "error": "parse: EmptyDataError: No columns to parse from file"
+    }
+  ]
+}

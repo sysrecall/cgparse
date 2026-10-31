@@ -1,0 +1,32 @@
+filename,invoice_number,invoice_date,supplier_name,customer_name,subtotal,tax,total,currency,line_item_count,expected_status,expected_rules,edge_case
+eval_clean_csv_01.csv,INV-2026-1001,2026-10-01,Acme Supplies Ltd,Northwind Traders,200.0,20.0,220.0,USD,2,validated,,clean
+eval_clean_csv_02.csv,INV-2026-1002,2026-10-02,Beta Logistics GmbH,Contoso GmbH,2050.0,205.0,2255.0,EUR,1,validated,,clean
+eval_clean_csv_03.csv,INV-2026-1003,2026-10-03,Gamma Manufacturing,Fabrikam Inc,860.0,86.0,946.0,GBP,3,validated,,clean
+eval_comma_money_csv_04.csv,INV-2026-1004,2026-10-04,Copper Works Inc,Northwind Traders,4500.0,450.0,4950.0,USD,2,validated,,comma_money
+eval_missing_tax_csv_05.csv,INV-2026-1005,2026-10-05,Delta Foods LLC,Adventure Works,540.0,0.0,540.0,USD,1,validated,,missing_tax
+eval_us_date_csv_06.csv,INV-2026-1006,2026-10-06,Epsilon Trading Co,Northwind Traders,350.0,35.0,385.0,USD,1,needs_review,type_and_format,us_date
+eval_missing_currency_csv_07.csv,INV-2026-1007,2026-10-07,Zeta Components,Northwind Traders,660.0,66.0,726.0,,1,needs_review,missing_field,missing_currency
+eval_no_line_items_csv_08.csv,INV-2026-1008,2026-10-08,Eta Services,Fabrikam Inc,500.0,50.0,550.0,USD,0,validated,,no_line_items
+eval_clean_xlsx_01.xlsx,INV-2026-2001,2026-10-09,Theta Materials,Contoso GmbH,1300.0,130.0,1430.0,GBP,3,validated,,clean
+eval_clean_xlsx_02.xlsx,INV-2026-2002,2026-10-10,Iota Hardware,Northwind Traders,730.0,73.0,803.0,USD,2,validated,,clean
+eval_multiline_xlsx_03.xlsx,INV-2026-2003,2026-10-11,Kappa Supplies,Adventure Works,960.0,96.0,1056.0,USD,2,validated,,clean
+eval_line_sum_xlsx_04.xlsx,INV-2026-2004,2026-10-12,Lambda Parts,Fabrikam Inc,100.0,10.0,110.0,USD,2,needs_review,line_items_sum,line_items_sum
+eval_duplicate_a_xlsx_05.xlsx,INV-DUP-9001,2026-10-13,Duplicate Co,Northwind Traders,300.0,30.0,330.0,USD,1,validated,duplicate_invoice,duplicate_pair_first
+eval_long_date_xlsx_06.xlsx,INV-2026-2006,2026-10-05,Mu Trading,Contoso GmbH,300.0,30.0,330.0,EUR,1,validated,,long_date
+eval_clean_xlsx_07.xlsx,INV-2026-2007,2026-10-14,Nu Components,Adventure Works,348.0,34.8,382.8,CHF,2,validated,,clean
+eval_clean_pdf_01.pdf,INV-2026-3001,2026-10-15,Xi Industries,Northwind Traders,2500.0,225.0,2725.0,USD,2,validated,,clean
+eval_clean_pdf_02.pdf,INV-2026-3002,2026-10-16,Omicron Ltd,Fabrikam Inc,900.0,90.0,990.0,EUR,1,validated,,clean
+eval_multipage_pdf_03.pdf,INV-2026-3003,2026-10-17,Pi Engineering,Contoso GmbH,400.0,40.0,440.0,USD,3,validated,,clean
+eval_multipage_pdf_04.pdf,INV-2026-3004,2026-10-18,Rho Systems,Adventure Works,1000.0,100.0,1100.0,USD,2,validated,,clean
+eval_arithmetic_pdf_05.pdf,INV-2026-3005,2026-10-19,Sigma Tools,Fabrikam Inc,100.0,10.0,120.0,USD,1,needs_review,subtotal_tax_total,arithmetic_mismatch
+eval_no_tax_pdf_06.pdf,INV-2026-3006,2026-10-20,Tau Supplies,Northwind Traders,200.0,0.0,200.0,USD,1,validated,,missing_tax
+eval_duplicate_b_pdf_07.pdf,INV-DUP-9001,2026-10-13,Duplicate Co,Northwind Traders,300.0,30.0,330.0,USD,1,validated,duplicate_invoice,duplicate_pair_second
+eval_missing_customer_pdf_08.pdf,INV-2026-3008,2026-10-21,Upsilon Ltd,,150.0,15.0,165.0,USD,1,needs_review,missing_field,missing_customer
+eval_clean_pdf_09.pdf,INV-2026-3009,2026-10-22,Phi Manufacturing,Contoso GmbH,370.0,37.0,407.0,CAD,2,validated,,clean
+eval_clean_png_01.png,INV-2026-4001,2026-10-23,Chi Foods LLC,Northwind Traders,540.0,54.0,594.0,USD,1,validated,,clean
+eval_clean_png_02.png,INV-2026-4002,2026-10-24,Psi Textiles,Adventure Works,310.0,31.0,341.0,GBP,2,validated,,clean
+eval_clean_png_03.png,INV-2026-4003,2026-10-25,Omega Foods,Contoso GmbH,250.0,25.0,275.0,EUR,1,validated,,clean
+eval_clean_png_04.png,INV-2026-4004,2026-10-26,Alpha Hardware,Fabrikam Inc,255.0,25.5,280.5,USD,2,validated,,clean
+eval_clean_png_05.png,INV-2026-4005,2026-10-27,Omega Foods,Northwind Traders,440.0,44.0,484.0,USD,1,validated,,clean
+eval_corrupt_csv_01.csv,,,,,,,,,0,failed,,empty_file_failure
+eval_corrupt_csv_02.csv,,,,,,,,,0,failed,,blank_file_failure
