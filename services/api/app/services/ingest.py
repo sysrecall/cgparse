@@ -1,16 +1,22 @@
-"""Ingest pipeline (api side): sniff → hash → stream to Tigris → insert row → enqueue."""
+"""Ingest pipeline (api side): sniff → hash → stream to Tigris → insert row → enqueue.
+
+Each file runs inside its own SAVEPOINT, so a rejected or failing file rolls back
+only its own work — the rest of the batch keeps the rows it already inserted.
+"""
 
 import hashlib
 import re
 import uuid
+from contextlib import suppress
 from dataclasses import dataclass
 
 import magic
-from app_core.clients.storage import upload_stream
+from app_core.clients.storage import delete_object, upload_stream
 from app_core.models.document import Document
 from app_core.models.enums import DocumentStatus, SourceKind
 from app_core.settings import get_api_settings
 from fastapi import UploadFile
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -30,8 +36,24 @@ MIME_TO_KIND: dict[str, SourceKind] = {
 }
 
 
+DUPLICATE_MESSAGE = "duplicate file (identical checksum already ingested)"
+
+
 class UnsupportedFile(ValueError):
     pass
+
+
+class DuplicateFile(ValueError):
+    pass
+
+
+def _discard_upload(storage_key: str | None) -> None:
+    """Best-effort cleanup when the database rejects a file we already uploaded."""
+    if not storage_key:
+        return
+    # Cleanup must never mask the real error (or the duplicate we are reporting).
+    with suppress(Exception):
+        delete_object(storage_key)
 
 
 @dataclass
@@ -62,6 +84,7 @@ def safe_filename(name: str) -> str:
 async def ingest_one(file: UploadFile, session: Session) -> IngestResult:
     """Full per-file path. Any failure is reported per file, never aborts the batch."""
     filename = file.filename or "unnamed"
+    storage_key: str | None = None
     try:
         head = await file.read(SNIFF_BYTES)
         if not head:
@@ -77,30 +100,45 @@ async def ingest_one(file: UploadFile, session: Session) -> IngestResult:
             size += chunk.size if hasattr(chunk, "size") else len(chunk)
             if size > settings.max_upload_mb * 1024 * 1024:
                 return IngestResult(filename, error=f"file exceeds {settings.max_upload_mb} MB limit")
+        checksum = hasher.hexdigest()
 
-        await file.seek(0)  # hash pass done — rewind for the storage pass
-        doc_id = uuid.uuid4()
-        storage_key = f"documents/{doc_id}/original/{safe_filename(filename)}"
-        upload_stream(storage_key, file.file, content_type=mime)
+        # One SAVEPOINT per file: a failure below rolls back only this file, so
+        # files already accepted in the same batch keep their rows.
+        with session.begin_nested():
+            duplicate = session.scalar(
+                select(Document.id).where(Document.checksum_sha256 == checksum)
+            )
+            if duplicate is not None:
+                # Common case: reject before spending a storage upload.
+                raise DuplicateFile(DUPLICATE_MESSAGE)
 
-        document = Document(
-            id=doc_id,
-            original_filename=filename,
-            checksum_sha256=hasher.hexdigest(),
-            mime_type=mime,
-            source_kind=kind.value,
-            storage_key=storage_key,
-            size_bytes=size,
-            status=DocumentStatus.QUEUED.value,
-        )
-        session.add(document)
-        session.flush()
+            await file.seek(0)  # hash pass done — rewind for the storage pass
+            doc_id = uuid.uuid4()
+            storage_key = f"documents/{doc_id}/original/{safe_filename(filename)}"
+            upload_stream(storage_key, file.file, content_type=mime)
+
+            document = Document(
+                id=doc_id,
+                original_filename=filename,
+                checksum_sha256=checksum,
+                mime_type=mime,
+                source_kind=kind.value,
+                storage_key=storage_key,
+                size_bytes=size,
+                status=DocumentStatus.QUEUED.value,
+            )
+            session.add(document)
+            session.flush()
         return IngestResult(filename, document=document)
+    except DuplicateFile as e:
+        return IngestResult(filename, error=str(e))
     except UnsupportedFile as e:
         return IngestResult(filename, error=str(e))
     except IntegrityError:
-        session.rollback()
-        return IngestResult(filename, error="duplicate file (identical checksum already ingested)")
+        # Lost a race with a concurrent upload of the same bytes: the unique
+        # index is the backstop, and our object is now unreferenced.
+        _discard_upload(storage_key)
+        return IngestResult(filename, error=DUPLICATE_MESSAGE)
     except Exception as e:  # noqa: BLE001 — per-file isolation is the point
-        session.rollback()
+        _discard_upload(storage_key)
         return IngestResult(filename, error=f"{type(e).__name__}: {e}")

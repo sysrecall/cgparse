@@ -91,8 +91,8 @@ def fresh(db_session_factory):
 
 @pytest.fixture
 def recorded():
-    """Captures storage uploads and queue enqueues instead of calling providers."""
-    return SimpleNamespace(stored={}, enqueued=[])
+    """Captures storage/queue calls instead of touching providers."""
+    return SimpleNamespace(stored={}, enqueued=[], deleted=[])
 
 
 @pytest.fixture
@@ -145,6 +145,7 @@ def client(recorded, monkeypatch):
         }
 
     monkeypatch.setattr(ingest, "upload_stream", fake_upload)
+    monkeypatch.setattr(ingest, "delete_object", recorded.deleted.append)
 
     with TestClient(app) as test_client:
         yield test_client
