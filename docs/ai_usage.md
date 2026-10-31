@@ -137,8 +137,8 @@ back to heuristics alone — the document is still processed.
 - **Schema-enforced output.** `ExtractionOut` validates types, the ISO date form
   and nullability; invalid output is retried once, then discarded.
 - **Post-hoc checks are non-AI.** The six validation rules, duplicate detection
-  (`sha256(supplier || invoice_number)`) and search ranking are deterministic
-  code; no model decides whether a document passes.
+  (supplier + invoice-number equality against stored extractions) and search
+  ranking are deterministic code; no model decides whether a document passes.
 - **No autonomy.** The model cannot call tools, write to the database or trigger
   reprocessing; it only returns fields for one document.
 

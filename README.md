@@ -3,9 +3,9 @@
 AI-powered ingestion, extraction, validation and search of financial documents
 (PDF · JPG · PNG · XLSX · XLS · CSV).
 
-Design decisions and the architecture this implements live in
-[`../ARCHITECTURE.md`](../ARCHITECTURE.md) (kept outside the code repo together
-with the original brief).
+Design decisions live in [`../ARCHITECTURE.md`](../ARCHITECTURE.md) (kept outside
+the code repo together with the original brief); the implemented system is
+diagrammed in [`docs/architecture.md`](docs/architecture.md).
 
 ---
 
@@ -21,6 +21,19 @@ with the original brief).
 3. **Review & correct** — the UI lists documents, shows extracted fields, line items, validation findings and the stage timeline; human edits are stamped `confidence=1.0 / source="human"` and survive reprocessing.
 4. **Search** — keyword full-text across chunk text + filename, grouped one result per document, with status/date/supplier/total/currency filters. `?semantic=true` returns `501` (deferred).
 
+## Architecture
+
+[`docs/architecture.md`](docs/architecture.md) contains:
+
+- the **system diagram** — web, API, workers, Tigris, Postgres, Redis, and the
+  two hosted AI providers, with the exact task names and queues;
+- the **upload** and **pipeline** sequence diagrams, including failure and
+  idempotency behaviour;
+- the **document state machine** (`queued → processing → validated |
+  needs_review | failed`, plus correction/reprocess edges);
+- the **ER diagram** and a column-by-column **schema reference** for all nine
+  tables, their `CHECK` constraints, indexes and the `JSONB` payload shapes.
+
 ## Structure
 
 ```
@@ -30,12 +43,12 @@ services/processing/   Celery workers: parse/OCR → LLM extraction → validate
 apps/web/              Next.js 16 UI (upload, progress, review, search)
 seed/                  sample + labeled evaluation corpora
 scripts/               make_samples.py, make_eval_dataset.py, evaluate.py
-docs/                  generated evaluation report + chart-ready metrics
+docs/                  architecture + schema diagrams, evaluation report, metrics, AI disclosure
 ```
 
 `app-core` is the contract both services share; the API **never** imports worker
-code (it only enqueues `processing.route_document`), and the workers never start
-a web server.
+code (it only enqueues pipeline entry tasks), and the workers never start a web
+server.
 
 ---
 
