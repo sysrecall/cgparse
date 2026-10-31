@@ -109,15 +109,15 @@ sequenceDiagram
 
     U->>W: select 1..n files
     W->>A: POST /api/v1/documents (multipart, streamed)
-    loop each file
+    loop each file (own SAVEPOINT)
         A->>A: sniff magic bytes, enforce size limit, hash SHA-256
-        A->>S: PUT original bytes
-        A->>P: INSERT documents (status=queued)
-        alt unique checksum violation
-            A->>P: rollback
-            A->>A: record item {filename, error="duplicate file…"}
-        else accepted
-            A->>A: record item {filename, document_id, status=queued}
+        A->>P: SELECT document by checksum
+        alt checksum already ingested
+            A->>A: roll back this savepoint → item {filename, error="duplicate file…"}
+        else new file
+            A->>S: PUT original bytes
+            A->>P: INSERT documents (status=queued)
+            A->>A: release savepoint → item {filename, document_id, status=queued}
         end
     end
     A->>P: COMMIT (one transaction for the batch)
@@ -128,10 +128,11 @@ sequenceDiagram
 
 The response is a per-file `items` array, and unsupported types, oversized files
 and unreadable uploads are reported as `error` items without aborting the batch.
-One caveat: all files share a single transaction, so a **duplicate** checksum
-mid-batch triggers a rollback that also discards files accepted earlier in that
-same request (they are still listed and enqueued, so their pipeline jobs find no
-row). Deduplicate against the returned errors, or upload duplicates separately.
+Each file is written inside its own `SAVEPOINT`, so a rejected or failing file
+rolls back only its own work and the rest of the batch keeps the rows it already
+inserted. Duplicates are caught by a checksum lookup **before** the object upload;
+the unique index remains the backstop for concurrent requests, and the
+just-uploaded object is deleted if that race is lost.
 
 ---
 

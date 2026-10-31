@@ -41,7 +41,7 @@ raised as questions instead of being guessed.
 
 ### How AI output was verified
 
-- **152 automated tests** pass (30 app-core, 72 processing, 50 api), including
+- **155 automated tests** pass (30 app-core, 72 processing, 53 api), including
   DB-marked integration tests against a dedicated Supabase dev project.
 - **`ruff` clean** in all three Python projects and `scripts/`.
 - **Real-provider evaluation** over a 31-document labeled corpus — actual OCR and
@@ -50,8 +50,9 @@ raised as questions instead of being guessed.
   auditable in isolation.
 - Bugs the tests caught in AI-written code (and fixed) are visible in history:
   XLSX empty cells read as `"nan"`, comma-formatted heuristic money rejected by
-  validation, a deprecated `DISTINCT ON` form, and a duplicate-detection
-  expectation that was wrong in the corpus.
+  validation, a deprecated `DISTINCT ON` form, a duplicate-detection expectation
+  that was wrong in the corpus, and a batch upload whose duplicate rollback
+  discarded files accepted earlier in the same request.
 
 ### Honest limitations
 
