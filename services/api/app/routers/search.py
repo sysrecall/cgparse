@@ -1,12 +1,18 @@
-"""Search: keyword (FTS + filename) now; semantic deferred (returns 501).
+"""Search: keyword (FTS + filename) and hybrid semantic search.
 
-Result shape: one entry per document carrying ALL matching snippets.
+Result shape: one entry per document carrying the best matching snippets.
+
+`semantic=false` keeps the original keyword ranking (`ts_rank`, filename hits
+below content hits). `semantic=true` embeds the query, pulls the nearest chunks
+from pgvector, and fuses both lists with reciprocal rank fusion — exact tokens
+(invoice numbers, supplier names) come from FTS, paraphrases from the vectors.
 """
 
 from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
+from app_core.clients.embeddings import EmbeddingError, embed_query
 from app_core.db import session_scope
 from app_core.models.document import Document
 from app_core.models.enums import DocumentStatus
@@ -20,6 +26,13 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/api/v1/search", tags=["search"])
 
 SNIPPET_CHARS = 400
+# Reciprocal rank fusion constant (the value from the original RRF paper):
+# damps the difference between the top ranks so neither list dominates.
+RRF_K = 60
+# Chunks returned by the vector query before grouping by document.
+VECTOR_CANDIDATES = 200
+# Snippets per document in semantic mode (keyword mode still returns all hits).
+SEMANTIC_SNIPPETS = 5
 
 
 def get_db() -> Any:
@@ -52,6 +65,15 @@ class SearchResponse(BaseModel):
     items: list[SearchHit]
 
 
+def _snippet(content: str, chunk_type: str, row_number: Any) -> dict:
+    content = (content or "").strip()
+    return Snippet(
+        chunk_type=chunk_type,
+        text=content[:SNIPPET_CHARS] + ("…" if len(content) > SNIPPET_CHARS else ""),
+        page_number=int(row_number) if row_number else None,
+    ).model_dump()
+
+
 def _fts_hits(db: Session, q: str) -> dict[str, dict]:
     """Keyword hits from chunk text, grouped by document with every snippet."""
     rows = db.execute(
@@ -75,15 +97,74 @@ def _fts_hits(db: Session, q: str) -> dict[str, dict]:
         doc_id = str(row["document_id"])
         entry = hits.setdefault(doc_id, {"rank": 0.0, "snippets": []})
         entry["rank"] = max(entry["rank"], float(row["rank"] or 0.0))
-        content = (row["content"] or "").strip()
-        entry["snippets"].append(
-            Snippet(
-                chunk_type=row["chunk_type"],
-                text=content[:SNIPPET_CHARS] + ("…" if len(content) > SNIPPET_CHARS else ""),
-                page_number=int(row["row_number"]) if row["row_number"] else None,
-            ).model_dump()
-        )
+        entry["snippets"].append(_snippet(row["content"], row["chunk_type"], row["row_number"]))
     return hits
+
+
+def _vector_hits(db: Session, q: str, limit: int = VECTOR_CANDIDATES) -> dict[str, dict]:
+    """Nearest chunks by cosine distance, grouped by document.
+
+    The query embedding is asymmetric (`input_type="query"`); passages were
+    embedded with `input_type="passage"`. Chunks without a vector (documents
+    indexed before embeddings existed) are skipped rather than scoring as zero.
+    """
+    vector = embed_query(q)
+    literal = "[" + ",".join(f"{value:.8f}" for value in vector) + "]"
+
+    rows = db.execute(
+        text(
+            """
+            SELECT tc.document_id,
+                   tc.content,
+                   tc.chunk_type,
+                   tc.provenance_meta->>'row' AS row_number,
+                   1 - (tc.embedding <=> CAST(:vec AS vector)) AS score
+            FROM text_chunks tc
+            WHERE tc.embedding IS NOT NULL
+            ORDER BY tc.embedding <=> CAST(:vec AS vector)
+            LIMIT :limit
+            """
+        ),
+        {"vec": literal, "limit": limit},
+    ).mappings()
+
+    hits: dict[str, dict] = {}
+    for row in rows:
+        doc_id = str(row["document_id"])
+        entry = hits.setdefault(doc_id, {"score": -1.0, "snippets": []})
+        entry["score"] = max(entry["score"], float(row["score"] or 0.0))
+        entry["snippets"].append(_snippet(row["content"], row["chunk_type"], row["row_number"]))
+    return hits
+
+
+def _fuse(fts: dict[str, dict], vector: dict[str, dict]) -> dict[str, dict]:
+    """Reciprocal rank fusion of the keyword and vector result lists."""
+    fused: dict[str, dict] = {}
+    ordered_lists = (
+        sorted(fts, key=lambda doc_id: -fts[doc_id]["rank"]),
+        sorted(vector, key=lambda doc_id: -vector[doc_id]["score"]),
+    )
+    for ordered in ordered_lists:
+        for position, doc_id in enumerate(ordered, start=1):
+            entry = fused.setdefault(doc_id, {"rank": 0.0, "snippets": []})
+            entry["rank"] += 1.0 / (RRF_K + position)
+
+    for doc_id, entry in fused.items():
+        merged: list[dict] = []
+        seen: set[str] = set()
+        # Vector snippets first: they explain why a semantic-only hit appeared.
+        for source in (vector.get(doc_id), fts.get(doc_id)):
+            for snippet in (source or {}).get("snippets", []):
+                if snippet["text"] in seen:
+                    continue
+                seen.add(snippet["text"])
+                merged.append(snippet)
+                if len(merged) >= SEMANTIC_SNIPPETS:
+                    break
+            if len(merged) >= SEMANTIC_SNIPPETS:
+                break
+        entry["snippets"] = merged
+    return fused
 
 
 def _apply_filters(stmt, **filters):
@@ -98,8 +179,10 @@ def _apply_filters(stmt, **filters):
 
 @router.get("", response_model=SearchResponse)
 def search(
-    q: str = Query(..., min_length=1, description="Keyword query (FTS + filename)"),
-    semantic: bool = Query(False, description="Semantic search — not implemented yet"),
+    q: str = Query(..., min_length=1, description="Query text (keyword or semantic)"),
+    semantic: bool = Query(
+        False, description="Hybrid search: FTS + pgvector, fused with reciprocal rank"
+    ),
     status: DocumentStatus | None = None,
     date_from: datetime | None = None,
     date_to: datetime | None = None,
@@ -110,12 +193,6 @@ def search(
     size: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
 ) -> SearchResponse:
-    if semantic:
-        raise HTTPException(
-            status_code=501,
-            detail="semantic search is not implemented yet (embeddings deferred); use semantic=false",
-        )
-
     hits = _fts_hits(db, q)
 
     # Filename matches join the same result set (metadata search alongside content).
@@ -131,8 +208,19 @@ def search(
         entry = hits.setdefault(str(doc.id), {"rank": 0.0, "snippets": []})
         entry["rank"] = max(entry["rank"], 0.05)  # filename hits rank below content hits
 
+    if semantic:
+        try:
+            hits = _fuse(hits, _vector_hits(db, q))
+        except EmbeddingError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail=f"semantic search unavailable: {exc}",
+            ) from exc
+
     if not hits:
-        return SearchResponse(query=q, semantic=False, total=0, page=page, size=size, items=[])
+        return SearchResponse(
+            query=q, semantic=semantic, total=0, page=page, size=size, items=[]
+        )
 
     docs = db.scalars(
         _apply_filters(
@@ -178,4 +266,6 @@ def search(
         )
         for d in window
     ]
-    return SearchResponse(query=q, semantic=False, total=total, page=page, size=size, items=items)
+    return SearchResponse(
+        query=q, semantic=semantic, total=total, page=page, size=size, items=items
+    )

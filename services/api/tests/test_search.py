@@ -1,21 +1,28 @@
-"""Search: FTS + filename grouping, filters, pagination, semantic 501."""
+"""Search: FTS + filename grouping, filters, pagination, hybrid semantic ranking."""
 
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from app_core.models.text_chunk import TextChunk
+from app_core.models.text_chunk import EMBEDDING_DIM, TextChunk
 from app_core.testing import default_fields
 
 URL = "/api/v1/search"
 
 
-def _add_chunk(db_session, document, content, *, chunk_type="row", meta=None):
+def _one_hot(position: int) -> list[float]:
+    vector = [0.0] * EMBEDDING_DIM
+    vector[position] = 1.0
+    return vector
+
+
+def _add_chunk(db_session, document, content, *, chunk_type="row", meta=None, embedding=None):
     db_session.add(
         TextChunk(
             document_id=document.id,
             chunk_type=chunk_type,
             content=content,
             provenance_meta=meta,
+            embedding=embedding,
         )
     )
     db_session.commit()
@@ -28,11 +35,18 @@ def _fields(**overrides):
     return fields
 
 
-def test_semantic_search_returns_501(client):
+def test_semantic_search_reports_unavailable_when_embeddings_fail(client, monkeypatch):
+    from app.routers import search
+
+    def boom(_text: str) -> list[float]:
+        raise search.EmbeddingError("no embedding API key")
+
+    monkeypatch.setattr(search, "embed_query", boom)
+
     response = client.get(URL, params={"q": "invoice", "semantic": "true"})
 
-    assert response.status_code == 501
-    assert "not implemented" in response.json()["detail"]
+    assert response.status_code == 503
+    assert "semantic search unavailable" in response.json()["detail"]
 
 
 def test_search_requires_a_query(client):
@@ -189,3 +203,82 @@ def test_search_paginates(client, db_session, document_factory):
     assert len(first["items"]) == 2
     assert len(second["items"]) == 1
     assert {item["id"] for item in first["items"]} & {item["id"] for item in second["items"]} == set()
+
+
+@pytest.mark.db
+def test_semantic_search_ranks_by_vector_similarity(
+    client, db_session, document_factory, monkeypatch
+):
+    from app.routers import search
+
+    near = document_factory(original_filename="near.csv")
+    far = document_factory(original_filename="far.csv")
+    _add_chunk(db_session, near, "office supplies invoice", embedding=_one_hot(0))
+    _add_chunk(db_session, far, "hydraulic pump invoice", embedding=_one_hot(1))
+
+    monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
+
+    body = client.get(URL, params={"q": "paper", "semantic": "true"}).json()
+
+    assert body["semantic"] is True
+    assert [item["id"] for item in body["items"]] == [str(near.id), str(far.id)]
+    assert body["items"][0]["rank"] > body["items"][1]["rank"]
+
+
+@pytest.mark.db
+def test_semantic_search_finds_documents_without_a_keyword_hit(
+    client, db_session, document_factory, monkeypatch
+):
+    from app.routers import search
+
+    semantic_only = document_factory(original_filename="paraphrase.csv")
+    _add_chunk(db_session, semantic_only, "Amounts outstanding for the quarter", embedding=_one_hot(0))
+
+    monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
+
+    body = client.get(URL, params={"q": "who owes us money", "semantic": "true"}).json()
+
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == str(semantic_only.id)
+    assert body["items"][0]["snippets"][0]["text"] == "Amounts outstanding for the quarter"
+
+
+@pytest.mark.db
+def test_keyword_mode_ignores_embeddings(
+    client, db_session, document_factory, monkeypatch
+):
+    from app.routers import search
+
+    document = document_factory()
+    _add_chunk(db_session, document, "widget row", embedding=_one_hot(0))
+
+    def unexpected(_text: str) -> list[float]:
+        raise AssertionError("semantic=false must not embed the query")
+
+    monkeypatch.setattr(search, "embed_query", unexpected)
+
+    body = client.get(URL, params={"q": "widget"}).json()
+
+    assert body["semantic"] is False
+    assert body["total"] == 1
+
+
+@pytest.mark.db
+def test_semantic_search_still_honours_status_filter(
+    client, db_session, document_factory, monkeypatch
+):
+    from app.routers import search
+
+    validated = document_factory(original_filename="a.csv", status="validated")
+    review = document_factory(original_filename="b.csv", status="needs_review")
+    _add_chunk(db_session, validated, "widget one", embedding=_one_hot(0))
+    _add_chunk(db_session, review, "widget two", embedding=_one_hot(1))
+
+    monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
+
+    body = client.get(
+        URL, params={"q": "widget", "semantic": "true", "status": "needs_review"}
+    ).json()
+
+    assert body["total"] == 1
+    assert body["items"][0]["id"] == str(review.id)
