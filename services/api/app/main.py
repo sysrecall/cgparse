@@ -39,7 +39,9 @@ def create_app() -> FastAPI:
     app.include_router(search_router)
     app.include_router(corrections_router)
 
-    @app.get("/health")
+    # Render's health check (and some load balancers) probe with HEAD; a GET-only
+    # route answers 405 and the deploy is marked unhealthy.
+    @app.api_route("/health", methods=["GET", "HEAD"])
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
