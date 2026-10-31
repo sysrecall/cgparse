@@ -46,7 +46,7 @@ class ProcessingSettings(BaseSettings):
         validation_alias=AliasChoices("PROC_LLM_API_KEY", "LLM_API_KEY"),
     )
     llm_base_url: str = "https://integrate.api.nvidia.com/v1"
-    llm_model: str = "openai/gpt-oss-20b"
+    llm_model: str = "nvidia/nemotron-3.5-bolt-e4b"
 
 
 class EmbeddingSettings(BaseSettings):
