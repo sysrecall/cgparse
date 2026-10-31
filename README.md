@@ -17,9 +17,9 @@ diagrammed in [`docs/architecture.md`](docs/architecture.md).
    - `parse` — pdfplumber for digital PDFs, **OpenParser PaddleOCR-VL** for scans/images, pandas for CSV/XLSX. Writes per-page text + search chunks.
    - `extract` — **regex heuristics first** (deterministic, with match spans), then the **LLM** (NVIDIA NIM `openai/gpt-oss-20b`) fills only what heuristics missed. Unknown values stay `null` with confidence `0.0` — never guessed.
    - `validate` — six rules: `missing_field`, `type_and_format`, `line_items_sum`, `subtotal_tax_total`, `negative_or_impossible_values`, `duplicate_invoice`. Any error → `needs_review`.
-   - `index` — FTS is a generated column, so chunks are searchable immediately (embeddings deferred).
+   - `index` — embeds every chunk into `text_chunks.embedding` (NVIDIA NIM `nvidia/nemotron-3.5-embed-1b`, requested at 1536 dims) so keyword and semantic search are both live; FTS itself is a generated column, so it needs no work here.
 3. **Review & correct** — the UI lists documents, shows extracted fields, line items, validation findings and the stage timeline; human edits are stamped `confidence=1.0 / source="human"` and survive reprocessing.
-4. **Search** — keyword full-text across chunk text + filename, grouped one result per document, with status/date/supplier/total/currency filters. `?semantic=true` returns `501` (deferred).
+4. **Search** — keyword full-text across chunk text + filename, or hybrid semantic search (`?semantic=true`) that fuses pgvector similarity with keyword rank via reciprocal rank fusion. Results are grouped one entry per document with the best snippets, and every filter applies to both modes.
 
 ## Architecture
 
@@ -65,13 +65,14 @@ No Docker: every piece is a plain local process or a hosted free tier.
 
 ## Configuration
 
-Copy `.env.example` to `.env` and fill it in. The three variable groups:
+Copy `.env.example` to `.env` and fill it in. The variable groups:
 
 | Group | Prefix | Used by |
 |---|---|---|
 | Shared | `DATABASE_URL`, `REDIS_URL`, `TIGRIS_BUCKET`, `AWS_*` | api **and** processing |
 | API | `API_*` | services/api |
 | Processing | `PROC_*` (falls back to `OPENPARSER_API_KEY` / `LLM_API_KEY`) | services/processing |
+| Embeddings | `EMBED_*` (falls back to `PROC_LLM_API_KEY` / `LLM_BASE_URL`) | api **and** processing |
 
 Integration tests and the evaluation harness need an **extra, dedicated Supabase
 dev project** via `TEST_DATABASE_URL`. It is aliased to `DATABASE_URL` inside the
@@ -143,7 +144,7 @@ cd services/api          && uv run pytest      # ingest, upload, reads, correcti
 | app-core | Extraction contract (anti-hallucination), money/date coercion, URL normalization |
 | processing — unit | CSV/XLSX quirks, digital vs scanned PDF routing, heuristics vs LLM merge, all six validation rules |
 | processing — `@pytest.mark.db` | Pipeline stages against the dev DB: idempotency, human-edit preservation, failure marking, chain dispatch |
-| api — unit | Magic-byte sniffing, filename safety, size/empty limits, `501` semantic, query validation |
+| api — unit | Magic-byte sniffing, filename safety, size/empty limits, embedding failure surfacing, query validation |
 | api — `@pytest.mark.db` | Upload→202 per-file isolation + dedupe, list/filter/pagination, detail & pages, corrections, reprocess, search (FTS/grouping/filters) |
 
 Providers are replaced in tests: Tigris uploads are captured in a dict, queue
@@ -205,7 +206,7 @@ deletes and re-inserts exactly those rows.
 - Statuses/kinds are plain strings validated by `StrEnum` + `CHECK` constraints.
 - Money is `NUMERIC(12,2)`; line-item `CHECK`s forbid negative values.
 - `text_chunks.content_tsv` is a generated `tsvector` column; `embedding` is a
-  nullable `vector(1536)` (populated when semantic search lands).
+  `vector(1536)` written by the pipeline's `index` stage (HNSW cosine index).
 
 ## AI usage
 
@@ -217,7 +218,9 @@ anti-hallucination guardrails and the measured results.
 
 ## Known limitations (v1)
 
-- Semantic search is deferred: `?semantic=true` → `501`; no embeddings are written.
+- Semantic search needs an embedding key: without `EMBED_API_KEY` (or the shared
+  NVIDIA key) `?semantic=true` returns `503`; documents indexed before embeddings
+  existed have no vectors until reprocessed.
 - TIFF is out of scope.
 - Negative line-item values can't be persisted (DB `CHECK`), so that rule is only
   exercised by unit tests.

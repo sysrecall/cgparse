@@ -361,7 +361,7 @@ erDiagram
 | Multiple `extractions` per document | Reprocessing is append-only history; readers take the newest row, so nothing is destroyed and diffs are possible. |
 | `line_items` are relational | They need arithmetic validation (`line_items_sum`), ordering and per-row confidence — JSONB would push that into application code. |
 | `text_chunks.content_tsv` is a **generated** column | `to_tsvector('english', content)` is maintained by Postgres; no trigger, no drift, searchable the moment a chunk is inserted. |
-| `embedding` exists but is nullable | Semantic search is deferred; the column and HNSW index are ready, nothing writes them, and `?semantic=true` returns `501`. |
+| `embedding` is nullable `vector(1536)` | The `index` stage embeds every chunk; the column stays nullable so a failed embedding run degrades to keyword-only search instead of losing the document. |
 | `checksum_sha256` is unique | Uploading the same bytes twice is detected at the DB level, not by a race-prone `SELECT` first. |
 | `corrections` is append-only | Designed as the audit trail (old → new, who, why) beside the current value in `extractions.fields`; the table is created but **not written in v1** because no authentication ships yet. |
 | `processing_events` is a table, not just pub/sub | Progress survives a Redis restart and a page refresh; the detail screen renders the timeline from it. |
@@ -530,7 +530,7 @@ read the newest extraction per document via `DISTINCT ON (document_id)`.
 | `ix_corrections_user_id` | `corrections` | `(user_id)` | per-reviewer queries |
 | `ix_text_chunks_document_id` | `text_chunks` | `(document_id)` | document-scoped search |
 | `ix_text_chunks_fts` | `text_chunks` | `GIN (content_tsv)` | full-text search |
-| `ix_text_chunks_embedding` | `text_chunks` | `HNSW (embedding vector_cosine_ops)` | semantic search (deferred) |
+| `ix_text_chunks_embedding` | `text_chunks` | `HNSW (embedding vector_cosine_ops)` | semantic search (nearest-chunk lookup) |
 
 ### 5.11 Applying the schema
 

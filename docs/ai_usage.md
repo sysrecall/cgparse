@@ -31,7 +31,7 @@ untracked file.
 | Pipeline stage boundaries and queue split (`ocr` / `llm`) | Celery chain, stage implementations |
 | Extraction policy: heuristics first, heuristics win, unknown stays `null`/`0.0` | Regex heuristics, LLM merge, Pydantic contract |
 | The six validation rules and their severities | Rule implementations and `needs_review` routing |
-| Search behaviour (keyword only; `?semantic=true` → `501`) | FTS queries, filters, grouping |
+| Search behaviour (FTS + hybrid semantic ranking) | FTS queries, vector query, RRF fusion, filters, grouping |
 | Correction semantics (human values `confidence=1.0`, `source="human"`, survive reprocess) | Endpoints and re-validation flow |
 | UI pages, styling rules (`STYLE_GUIDE.md`) | Next.js components, polling, SWR wiring |
 | Testing/evaluation strategy and the dedicated dev DB | Suites, corpus generator, harness, report |
@@ -72,13 +72,17 @@ raised as questions instead of being guessed.
 |---|---|---|
 | OCR for scans and images | OpenParser, `paddleocr-vl-1.6` (PaddleOCR-VL) | `app_core/clients/openparser.py` |
 | Field extraction | NVIDIA NIM, `openai/gpt-oss-20b` | `app_core/clients/llm.py`, `app/llm/extract.py` |
+| Chunk/query embeddings | NVIDIA NIM, `nvidia/nemotron-3.5-embed-1b` (2048 native, requested at 1536) | `app_core/clients/embeddings.py` |
 
 OCR is invoked only for images and scanned PDFs; digital PDFs use `pdfplumber`
 and spreadsheets use `pandas`, so no AI call is made for machine-readable text.
 TIFF is out of scope for v1.
 
-Embeddings and semantic search are deferred: no embedding model is called, and
-`GET /search?semantic=true` returns `501`.
+Embeddings are called with no prompt: the same text that is already stored in
+`text_chunks` is sent as `input_type="passage"` by the worker's `index` stage, and
+the user's query is sent as `input_type="query"` by `GET /search?semantic=true`
+(the model is asymmetric, so the two input types must differ). Searches fuse the
+vector result list with the keyword list by reciprocal rank fusion.
 
 ### 2.1 OCR request
 
