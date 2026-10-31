@@ -15,7 +15,7 @@ diagrammed in [`docs/architecture.md`](docs/architecture.md).
 2. **Process** each file through a Celery chain:
    `route → parse → extract → validate → index`.
    - `parse` — pdfplumber for digital PDFs, **OpenParser PaddleOCR-VL** for scans/images, pandas for CSV/XLSX. Writes per-page text + search chunks.
-   - `extract` — **regex heuristics first** (deterministic, with match spans), then the **LLM** (NVIDIA NIM `openai/gpt-oss-20b`) fills only what heuristics missed. Unknown values stay `null` with confidence `0.0` — never guessed.
+   - `extract` — **regex heuristics first** (deterministic, with match spans), then the **LLM** (NVIDIA NIM `nvidia/nemotron-3.5-bolt-e4b`) fills only what heuristics missed. Unknown values stay `null` with confidence `0.0` — never guessed.
    - `validate` — six rules: `missing_field`, `type_and_format`, `line_items_sum`, `subtotal_tax_total`, `negative_or_impossible_values`, `duplicate_invoice`. Any error → `needs_review`.
    - `index` — embeds every chunk into `text_chunks.embedding` (NVIDIA NIM `nvidia/nemotron-3.5-embed-1b`, requested at 1536 dims) so keyword and semantic search are both live; FTS itself is a generated column, so it needs no work here.
 3. **Review & correct** — the UI lists documents, shows extracted fields, line items, validation findings and the stage timeline; human edits are stamped `confidence=1.0 / source="human"` and survive reprocessing.
@@ -213,7 +213,7 @@ deletes and re-inserts exactly those rows.
 [`docs/ai_usage.md`](docs/ai_usage.md) discloses both sides of AI in this project:
 the AI coding agent used to build it (with how its output was verified) and the
 runtime models — OpenParser `paddleocr-vl-1.6` for OCR and NVIDIA NIM
-`openai/gpt-oss-20b` for extraction — including the verbatim prompts, the
+`nvidia/nemotron-3.5-bolt-e4b` for extraction — including the verbatim prompts, the
 anti-hallucination guardrails and the measured results.
 
 ## Known limitations (v1)

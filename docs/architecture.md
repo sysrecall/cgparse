@@ -47,7 +47,7 @@ flowchart TB
 
     subgraph PROVIDERS["Hosted AI providers"]
         OCR["OpenParser<br/>paddleocr-vl-1.6"]
-        LLM["NVIDIA NIM<br/>openai/gpt-oss-20b"]
+        LLM["NVIDIA NIM<br/>nvidia/nemotron-3.5-bolt-e4b"]
     end
 
     UI -- "HTTP + JSON (SWR polling)" --> EP

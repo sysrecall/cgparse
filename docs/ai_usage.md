@@ -71,7 +71,7 @@ raised as questions instead of being guessed.
 | Purpose | Provider / model | Where |
 |---|---|---|
 | OCR for scans and images | OpenParser, `paddleocr-vl-1.6` (PaddleOCR-VL) | `app_core/clients/openparser.py` |
-| Field extraction | NVIDIA NIM, `openai/gpt-oss-20b` | `app_core/clients/llm.py`, `app/llm/extract.py` |
+| Field extraction | NVIDIA NIM, `nvidia/nemotron-3.5-bolt-e4b` | `app_core/clients/llm.py`, `app/llm/extract.py` |
 | Chunk/query embeddings | NVIDIA NIM, `nvidia/nemotron-3.5-embed-1b` (2048 native, requested at 1536) | `app_core/clients/embeddings.py` |
 
 OCR is invoked only for images and scanned PDFs; digital PDFs use `pdfplumber`

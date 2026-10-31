@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "generated_at": "2026-10-30T11:19:44+00:00",
-    "model": "openai/gpt-oss-20b",
+    "generated_at": "2026-10-31T21:36:08+00:00",
+    "model": "nvidia/nemotron-3.5-bolt-e4b",
     "llm": true,
     "workers": 4,
     "corpus": 31
@@ -214,42 +214,42 @@
     ]
   },
   "timing": {
-    "wall_seconds": 228.17,
+    "wall_seconds": 186.27,
     "documents": 31,
-    "throughput_docs_per_second": 0.1359,
+    "throughput_docs_per_second": 0.1664,
     "per_stage_seconds": {
       "parse": {
         "count": 31,
-        "p50": 2.197,
-        "p95": 5.845
+        "p50": 2.063,
+        "p95": 5.67
       },
       "extract": {
         "count": 29,
-        "p50": 12.89,
-        "p95": 27.171
+        "p50": 6.535,
+        "p95": 7.722
       },
       "validate": {
         "count": 29,
-        "p50": 1.992,
-        "p95": 2.792
+        "p50": 1.755,
+        "p95": 2.384
       },
       "index": {
         "count": 29,
-        "p50": 1.053,
-        "p95": 1.468
+        "p50": 2.012,
+        "p95": 2.52
       }
     },
     "per_document_seconds": {
-      "p50": 18.624,
-      "p95": 31.77,
-      "max": 58.683
+      "p50": 12.494,
+      "p95": 16.014,
+      "max": 16.498
     },
     "llm_tokens": {
-      "calls": 30,
-      "prompt_tokens": 16246,
-      "completion_tokens": 14619,
-      "total_tokens": 30865,
-      "tokens_per_document": 995.6
+      "calls": 29,
+      "prompt_tokens": 15732,
+      "completion_tokens": 7386,
+      "total_tokens": 23118,
+      "tokens_per_document": 745.7
     }
   },
   "documents": [
@@ -297,23 +297,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Widget",
-          "quantity": 2.0,
-          "unit_price": 50.0,
-          "amount": 100.0
-        },
-        {
           "description": "Bolt",
           "quantity": 4.0,
           "unit_price": 25.0,
           "amount": 100.0
+        },
+        {
+          "description": "Widget",
+          "quantity": 2.0,
+          "unit_price": 50.0,
+          "amount": 100.0
         }
       ],
       "timings": {
-        "parse": 2.5463301579998188,
-        "extract": 21.47758022400012,
-        "validate": 1.8401455500002157,
-        "index": 1.0326389900001232
+        "parse": 2.361808719000692,
+        "extract": 6.800036923999869,
+        "validate": 1.7627683950013306,
+        "index": 2.71594958499918
       },
       "error": null
     },
@@ -362,10 +362,10 @@
         }
       ],
       "timings": {
-        "parse": 1.5738222330001008,
-        "extract": 27.17132158200002,
-        "validate": 2.280563153000003,
-        "index": 0.9929537970001547
+        "parse": 1.5073626459998195,
+        "extract": 7.115248889000213,
+        "validate": 1.6820311039991793,
+        "index": 1.983790037997096
       },
       "error": null
     },
@@ -419,6 +419,12 @@
       ],
       "actual_line_items": [
         {
+          "description": "Rivets",
+          "quantity": 1000.0,
+          "unit_price": 0.12,
+          "amount": 120.0
+        },
+        {
           "description": "Steel brackets",
           "quantity": 200.0,
           "unit_price": 3.5,
@@ -429,19 +435,13 @@
           "quantity": 500.0,
           "unit_price": 0.08,
           "amount": 40.0
-        },
-        {
-          "description": "Rivets",
-          "quantity": 1000.0,
-          "unit_price": 0.12,
-          "amount": 120.0
         }
       ],
       "timings": {
-        "parse": 2.6880518980001398,
-        "extract": 24.53597672900014,
-        "validate": 1.8225198840000303,
-        "index": 0.9939275950000592
+        "parse": 2.521667676999641,
+        "extract": 7.762460774996725,
+        "validate": 1.748718759001349,
+        "index": 2.4932406379994063
       },
       "error": null
     },
@@ -489,23 +489,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Insulation tape roll",
-          "quantity": 50.0,
-          "unit_price": 50.0,
-          "amount": 2500.0
-        },
-        {
           "description": "Copper wire spool",
           "quantity": 25.0,
           "unit_price": 80.0,
           "amount": 2000.0
+        },
+        {
+          "description": "Insulation tape roll",
+          "quantity": 50.0,
+          "unit_price": 50.0,
+          "amount": 2500.0
         }
       ],
       "timings": {
-        "parse": 2.5274456440001813,
-        "extract": 53.34947189600007,
-        "validate": 1.82034707899993,
-        "index": 0.985280141000203
+        "parse": 2.3929863479970663,
+        "extract": 7.092019326002628,
+        "validate": 1.687677967001946,
+        "index": 2.2052549210020516
       },
       "error": null
     },
@@ -554,10 +554,10 @@
         }
       ],
       "timings": {
-        "parse": 1.6834478839996336,
-        "extract": 9.540075247000004,
-        "validate": 2.2675875159998213,
-        "index": 0.9716672210001889
+        "parse": 1.617717929999344,
+        "extract": 5.697242845999426,
+        "validate": 1.7489624280024145,
+        "index": 1.9592188319984416
       },
       "error": null
     },
@@ -610,10 +610,10 @@
         }
       ],
       "timings": {
-        "parse": 1.601841013000012,
-        "extract": 8.977709871000116,
-        "validate": 2.107790763999674,
-        "index": 0.9657557380000981
+        "parse": 1.539672288003203,
+        "extract": 5.795469865999621,
+        "validate": 1.8339101059973473,
+        "index": 1.9730521309975302
       },
       "error": null
     },
@@ -666,10 +666,10 @@
         }
       ],
       "timings": {
-        "parse": 2.395291860999805,
-        "extract": 12.890269911999894,
-        "validate": 1.992236006999974,
-        "index": 0.9793494199998349
+        "parse": 1.5954306919993542,
+        "extract": 5.809454302998347,
+        "validate": 1.9026622669989592,
+        "index": 2.108310152998456
       },
       "error": null
     },
@@ -704,10 +704,10 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 1.4324456629997258,
-        "extract": 12.195743583999956,
-        "validate": 2.167338987000221,
-        "index": 0.9930943859999388
+        "parse": 1.5612920540006598,
+        "extract": 4.969448239000485,
+        "validate": 1.6829842279985314,
+        "index": 2.0222815799970704
       },
       "error": null
     },
@@ -761,6 +761,12 @@
       ],
       "actual_line_items": [
         {
+          "description": "Aluminium sheet",
+          "quantity": 20.0,
+          "unit_price": 30.0,
+          "amount": 600.0
+        },
+        {
           "description": "Copper rod",
           "quantity": 15.0,
           "unit_price": 40.0,
@@ -771,19 +777,13 @@
           "quantity": 5.0,
           "unit_price": 20.0,
           "amount": 100.0
-        },
-        {
-          "description": "Aluminium sheet",
-          "quantity": 20.0,
-          "unit_price": 30.0,
-          "amount": 600.0
         }
       ],
       "timings": {
-        "parse": 3.974464264999824,
-        "extract": 10.365931895000358,
-        "validate": 1.8092864330001248,
-        "index": 1.7277337549999174
+        "parse": 3.523291896999581,
+        "extract": 7.721697353001218,
+        "validate": 1.754833939998207,
+        "index": 2.3383922730026825
       },
       "error": null
     },
@@ -844,10 +844,10 @@
         }
       ],
       "timings": {
-        "parse": 1.6080334200000834,
-        "extract": 23.74909770300019,
-        "validate": 2.3245736250000846,
-        "index": 0.9736180710001463
+        "parse": 2.7724882860020443,
+        "extract": 6.732446567999432,
+        "validate": 1.6804017790018406,
+        "index": 2.345422566999332
       },
       "error": null
     },
@@ -895,23 +895,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Cable reel",
-          "quantity": 8.0,
-          "unit_price": 95.0,
-          "amount": 760.0
-        },
-        {
           "description": "Connector",
           "quantity": 40.0,
           "unit_price": 5.0,
           "amount": 200.0
+        },
+        {
+          "description": "Cable reel",
+          "quantity": 8.0,
+          "unit_price": 95.0,
+          "amount": 760.0
         }
       ],
       "timings": {
-        "parse": 2.016158708000148,
-        "extract": 18.97437104599976,
-        "validate": 2.838293569999678,
-        "index": 1.158782828999847
+        "parse": 2.7801404599995294,
+        "extract": 6.776031384000817,
+        "validate": 2.383940628998971,
+        "index": 2.5197559389998787
       },
       "error": null
     },
@@ -976,10 +976,10 @@
         }
       ],
       "timings": {
-        "parse": 1.6084891519999474,
-        "extract": 17.479252178000024,
-        "validate": 2.7915243560000818,
-        "index": 1.1850934959998085
+        "parse": 2.399068734001048,
+        "extract": 6.702074709999579,
+        "validate": 2.4462865899986355,
+        "index": 2.0322601349980687
       },
       "error": null
     },
@@ -1032,10 +1032,10 @@
         }
       ],
       "timings": {
-        "parse": 1.6812557830003243,
-        "extract": 7.966864935000103,
-        "validate": 2.4239529649998985,
-        "index": 1.0769261519999418
+        "parse": 1.5995703510016028,
+        "extract": 5.899929661998613,
+        "validate": 1.9105216759999166,
+        "index": 1.9578191609980422
       },
       "error": null
     },
@@ -1084,10 +1084,10 @@
         }
       ],
       "timings": {
-        "parse": 1.4979607049999686,
-        "extract": 16.089159294999718,
-        "validate": 2.6630486509998264,
-        "index": 1.0782810539999446
+        "parse": 1.5653934809997736,
+        "extract": 5.851654622001661,
+        "validate": 1.6859695579987601,
+        "index": 2.033889177000674
       },
       "error": null
     },
@@ -1148,10 +1148,10 @@
         }
       ],
       "timings": {
-        "parse": 1.7926678489998267,
-        "extract": 8.642189601000155,
-        "validate": 2.619434070000352,
-        "index": 1.4680799939997087
+        "parse": 1.5709383850007725,
+        "extract": 6.737761809003132,
+        "validate": 1.7484367420001945,
+        "index": 2.0099809970015485
       },
       "error": null
     },
@@ -1212,10 +1212,10 @@
         }
       ],
       "timings": {
-        "parse": 1.8033753830000023,
-        "extract": 8.401003425999988,
-        "validate": 1.9800739880001856,
-        "index": 1.0784794280002643
+        "parse": 1.9484683709997626,
+        "extract": 6.989432297999883,
+        "validate": 1.6862965229993279,
+        "index": 2.001256182000361
       },
       "error": null
     },
@@ -1264,10 +1264,10 @@
         }
       ],
       "timings": {
-        "parse": 1.8709906619997128,
-        "extract": 13.30624620000026,
-        "validate": 1.9666231599999264,
-        "index": 1.0597895270002482
+        "parse": 1.704792788001214,
+        "extract": 5.852026683998702,
+        "validate": 1.7468968040011532,
+        "index": 1.9975378869967244
       },
       "error": null
     },
@@ -1340,10 +1340,10 @@
         }
       ],
       "timings": {
-        "parse": 2.218094032999943,
-        "extract": 13.402983226000288,
-        "validate": 1.9251875139998447,
-        "index": 1.077560663999975
+        "parse": 2.0627177850001317,
+        "extract": 7.525211946998752,
+        "validate": 1.6788135839997267,
+        "index": 2.063926707000064
       },
       "error": null
     },
@@ -1404,10 +1404,10 @@
         }
       ],
       "timings": {
-        "parse": 2.5379197219999696,
-        "extract": 7.8092278710000755,
-        "validate": 2.389793945999827,
-        "index": 1.0532309590003024
+        "parse": 2.0334454760013614,
+        "extract": 6.6887784770005965,
+        "validate": 1.759666597998148,
+        "index": 2.012230599997565
       },
       "error": null
     },
@@ -1460,10 +1460,10 @@
         }
       ],
       "timings": {
-        "parse": 1.792517577000126,
-        "extract": 7.411899943999742,
-        "validate": 2.1422304529996836,
-        "index": 1.0665487379997103
+        "parse": 1.7704059759998927,
+        "extract": 5.893415290000121,
+        "validate": 1.8390515579994826,
+        "index": 1.9702924880002683
       },
       "error": null
     },
@@ -1512,10 +1512,10 @@
         }
       ],
       "timings": {
-        "parse": 2.8954859190002935,
-        "extract": 7.238771209000333,
-        "validate": 1.8816224679999323,
-        "index": 1.0729046300002665
+        "parse": 2.0059885019982175,
+        "extract": 6.252516568001738,
+        "validate": 1.7566319920006208,
+        "index": 1.9759147250006208
       },
       "error": null
     },
@@ -1561,17 +1561,17 @@
       ],
       "actual_line_items": [
         {
-          "description": "Repeated item",
+          "description": "Repeated item 1",
           "quantity": 1.0,
           "unit_price": 300.0,
           "amount": 300.0
         }
       ],
       "timings": {
-        "parse": 1.8050832500002798,
-        "extract": 13.79244230500035,
-        "validate": 2.1453777070000797,
-        "index": 1.0825522850000198
+        "parse": 2.076719813001546,
+        "extract": 6.26248078399658,
+        "validate": 1.8317767010012176,
+        "index": 1.974765587998263
       },
       "error": null
     },
@@ -1624,10 +1624,10 @@
         }
       ],
       "timings": {
-        "parse": 1.975401829999555,
-        "extract": 16.48170961300002,
-        "validate": 2.1436759329999404,
-        "index": 1.0565763929998866
+        "parse": 2.0630118349981785,
+        "extract": 6.262504583999544,
+        "validate": 1.921982111998659,
+        "index": 1.9869333360002202
       },
       "error": null
     },
@@ -1688,10 +1688,10 @@
         }
       ],
       "timings": {
-        "parse": 2.19671571400022,
-        "extract": 14.047441776999676,
-        "validate": 1.9713682569999946,
-        "index": 1.013198850000208
+        "parse": 2.117038688997127,
+        "extract": 7.171230109001044,
+        "validate": 1.6713823089994548,
+        "index": 1.975144554999133
       },
       "error": null
     },
@@ -1740,10 +1740,10 @@
         }
       ],
       "timings": {
-        "parse": 8.07657667400008,
-        "extract": 8.198088531000394,
-        "validate": 1.9530203270001039,
-        "index": 1.1015777720003825
+        "parse": 6.6081229070005065,
+        "extract": 5.640556761998596,
+        "validate": 1.7669762510013243,
+        "index": 1.9981365140010894
       },
       "error": null
     },
@@ -1804,10 +1804,10 @@
         }
       ],
       "timings": {
-        "parse": 5.844804140999713,
-        "extract": 23.031893711000066,
-        "validate": 1.9086295709998922,
-        "index": 0.9849841619998188
+        "parse": 6.042429648001416,
+        "extract": 6.534635790998436,
+        "validate": 1.6881669540016446,
+        "index": 2.0147377110006346
       },
       "error": null
     },
@@ -1856,10 +1856,10 @@
         }
       ],
       "timings": {
-        "parse": 5.700520245000007,
-        "extract": 10.544096857999648,
-        "validate": 1.919230854000034,
-        "index": 1.0175568429999657
+        "parse": 5.260102871001436,
+        "extract": 5.708834533998015,
+        "validate": 1.7683778080026968,
+        "index": 1.956846986002347
       },
       "error": null
     },
@@ -1920,10 +1920,10 @@
         }
       ],
       "timings": {
-        "parse": 5.434531160000006,
-        "extract": 9.289576683000178,
-        "validate": 1.9203155440000046,
-        "index": 1.0424622720001935
+        "parse": 5.66963881799893,
+        "extract": 6.620755844000087,
+        "validate": 1.6903625550003198,
+        "index": 2.5174698890004947
       },
       "error": null
     },
@@ -1972,10 +1972,10 @@
         }
       ],
       "timings": {
-        "parse": 6.2634364819996335,
-        "extract": 9.684390865000296,
-        "validate": 1.966382276999866,
-        "index": 1.0049938530000873
+        "parse": 5.610249241999554,
+        "extract": 5.781556876001559,
+        "validate": 1.7647431299992604,
+        "index": 2.016803489997983
       },
       "error": null
     },
@@ -2010,7 +2010,7 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 2.9874217350002255
+        "parse": 1.7031059239998285
       },
       "error": "parse: EmptyDataError: No columns to parse from file"
     },
@@ -2045,7 +2045,7 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 2.5675722289997793
+        "parse": 1.711118693001481
       },
       "error": "parse: EmptyDataError: No columns to parse from file"
     }
