@@ -73,7 +73,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "passlib", extra = ["bcrypt"] },
     { name = "pyjwt" },
-    { name = "python-magic" },
+    { name = "python-magic-standalone" },
     { name = "python-multipart" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -96,7 +96,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.111" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7" },
     { name = "pyjwt", specifier = ">=2.8" },
-    { name = "python-magic", specifier = ">=0.4.27" },
+    { name = "python-magic-standalone", specifier = ">=0.4.29" },
     { name = "python-multipart", specifier = ">=0.0.9" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
 ]
@@ -1553,12 +1553,25 @@ wheels = [
 ]
 
 [[package]]
-name = "python-magic"
-version = "0.4.27"
+name = "python-magic-standalone"
+version = "0.4.29"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/da/db/0b3e28ac047452d079d375ec6798bf76a036a08182dbb39ed38116a49130/python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b", size = 14677, upload-time = "2022-06-07T20:16:59.508Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/73/9f872cb81fc5c3bb48f7227872c28975f998f3e7c2b1c16e95e6432bbb90/python_magic-0.4.27-py2.py3-none-any.whl", hash = "sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3", size = 13840, upload-time = "2022-06-07T20:16:57.763Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/76/804f83aa339ed550042f660f35b50b9cd46f5dc3bf63d5d373ed67fa4aee/python_magic_standalone-0.4.29-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:2fa0b1d4d64f40b98f413c9d681bcdae1cc50026ac97158ea73efdaff548a436", size = 1004847, upload-time = "2026-10-29T07:21:46.894Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/ce/293f837f4350c66feee851a87498d9965990995983451999cc3c02ad999e/python_magic_standalone-0.4.29-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:403d77db542f1bc91f1b311ec76952ae70ecf8fc11ff3c1a144df03cb5d9a542", size = 614564, upload-time = "2026-10-29T07:21:48.199Z" },
+    { url = "https://files.pythonhosted.org/packages/49/30/399559fbab1d35a4e6515fba9ce8e857c8379080cd679ec438fc4c623d4b/python_magic_standalone-0.4.29-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0c69468599e22f0264c82a379b9b5ac30e8c149365ef7a1460ddce50f5c787f6", size = 860816, upload-time = "2026-10-29T07:21:49.296Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/d3/6bcbbf8f8a0b7e39a06df75ce5c9bfe920e833cbde9303d9ab1284e6d1cf/python_magic_standalone-0.4.29-py2.py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4cd307450db24686b6265b5806b3951f21a53031b84777b05e60daf08e15f205", size = 847199, upload-time = "2026-10-29T07:21:50.512Z" },
+    { url = "https://files.pythonhosted.org/packages/95/54/0e26724490ab88bb21273e3cffa7dd4e5291023c1d6ab87ef2303aa2cd57/python_magic_standalone-0.4.29-py2.py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4ab2c2429432156ed54f26d7adb3e79d9efebbd7e64c9b1ffadae42610c322cd", size = 879789, upload-time = "2026-10-29T07:21:51.641Z" },
+    { url = "https://files.pythonhosted.org/packages/40/00/82b5e96b3609ff63906cd896f5dfa27114f00f53ed3389b0d4115fdc4944/python_magic_standalone-0.4.29-py2.py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:c7cae8ffdfc6e05c1c915981acb2518f4ba6874f5b6be80dccbf368db2749be9", size = 876913, upload-time = "2026-10-29T07:21:52.731Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/1b/ad2fd5aae832bc53bf1f209cfad428a5733b9f88502e836c5335e27f5015/python_magic_standalone-0.4.29-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d6225dfd64a5e1bb0443a802a2cc9b25fe2b56850de4522ce792ee3851409232", size = 859967, upload-time = "2026-10-29T07:21:53.773Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/82/8dc9d6f71a7d9769fe007279a56ff5dd4a343db3ef01dcb755e4bd019e3d/python_magic_standalone-0.4.29-py2.py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:8ebc179aeb86d5ca01d024fdafc7f9166c7f8d6c77207e251c42b3f116402cf3", size = 851801, upload-time = "2026-10-29T07:21:55.242Z" },
+    { url = "https://files.pythonhosted.org/packages/92/2c/22a2efc16b153ed45706de10196843762f77fc2f83dc71003eff0403108e/python_magic_standalone-0.4.29-py2.py3-none-musllinux_1_1_i686.whl", hash = "sha256:fd9491444121da492774bb4def36047d1baac3463707925e73afa653b795c44d", size = 841721, upload-time = "2026-10-29T07:21:57.059Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/95/a9319ce23c6bdb524db726d6ae3ea62f92fca4dd587bb802248027e5fef4/python_magic_standalone-0.4.29-py2.py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:155a8236da45125de10020d3175cba861a72a5de1ae939bd93d41152c96e86bc", size = 868250, upload-time = "2026-10-29T07:21:58.987Z" },
+    { url = "https://files.pythonhosted.org/packages/82/2d/9887a055d20330681bf79dfb2950a2e6fed7cd20c011f9d2a1803d203c25/python_magic_standalone-0.4.29-py2.py3-none-musllinux_1_1_s390x.whl", hash = "sha256:690aac176b1824366010f4bf1618b009c34b19f45ea713039cd391566c58ace5", size = 865319, upload-time = "2026-10-29T07:22:00.156Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/4f/25ef40e280d5fed8cabe966bffa8f5e46d94151226bd230e7c131edaf877/python_magic_standalone-0.4.29-py2.py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:b504e4dcb7ca25769e8b3bb1d04db23a6acb6ea52acf5ced2b87375818674f4f", size = 850735, upload-time = "2026-10-29T07:22:01.254Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/f7/dfeb397a6c27eaeef94ee541a25b57ea4be08f3fbbd622eb9d92b38d6b7f/python_magic_standalone-0.4.29-py2.py3-none-win32.whl", hash = "sha256:264a93acecb94a4c79b7474054c37a709e27e63001a5207290fcddb05a9abe17", size = 1741634, upload-time = "2026-10-29T07:22:02.479Z" },
+    { url = "https://files.pythonhosted.org/packages/42/1b/b2242d6100f4248ad99b722794734690ed0af7da947cb9d332ad6af24de7/python_magic_standalone-0.4.29-py2.py3-none-win_amd64.whl", hash = "sha256:ee9767392b66d0d63bc2ec6c79930308585f5b5bcb7f749eb7b68fa1e5bbdfc2", size = 1591532, upload-time = "2026-10-29T07:22:03.565Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/3c/62632d9768685784f0b3a9ab72365a1f4daa100b9bc92738536859d83d78/python_magic_standalone-0.4.29-py2.py3-none-win_arm64.whl", hash = "sha256:fba6b07889c28acc94caec9506df60c529a494320aa443b5b97570a54ba101a5", size = 1533788, upload-time = "2026-10-29T07:22:04.68Z" },
 ]
 
 [[package]]

@@ -11,7 +11,9 @@ dependencies = [
     "python-multipart>=0.0.9",
     "pyjwt>=2.8",
     "passlib[bcrypt]>=1.7",
-    "python-magic>=0.4.27",
+    # Bundles libmagic.so.1 + magic.mgc in the wheel, so no system libmagic is
+    # needed on hosts that can't apt-get install libmagic1 (Render native runtime).
+    "python-magic-standalone>=0.4.29",
 ]
 
 [dependency-groups]
