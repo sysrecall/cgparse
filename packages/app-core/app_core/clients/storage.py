@@ -28,6 +28,12 @@ def upload_stream(key: str, stream, content_type: str) -> None:
     )
 
 
+def delete_object(key: str) -> None:
+    """Remove an object (used to clean up when an insert loses a uniqueness race)."""
+    settings = get_shared_settings()
+    get_s3_client().delete_object(Bucket=settings.tigris_bucket, Key=key)
+
+
 def presigned_get(key: str, expires_in: int = 3600) -> str:
     """Short-lived read URL — used later for page previews in the UI."""
     settings = get_shared_settings()
