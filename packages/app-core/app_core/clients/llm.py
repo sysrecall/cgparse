@@ -15,6 +15,16 @@ def get_llm_client() -> OpenAI:
     return OpenAI(api_key=settings.llm_api_key, base_url=settings.llm_base_url)
 
 
+# Optional per-call usage recorder. The evaluation harness installs a list here;
+# runtime leaves it None so no overhead or import cycle is introduced.
+usage_sink: list[dict] | None = None
+
+
+def set_usage_sink(sink: list[dict] | None) -> None:
+    global usage_sink
+    usage_sink = sink
+
+
 def complete_json(system: str, user: str, max_tokens: int = 2000) -> dict:
     """Chat completion expected to return a JSON object. Raises on unusable output."""
     settings = get_processing_settings()
@@ -27,6 +37,16 @@ def complete_json(system: str, user: str, max_tokens: int = 2000) -> dict:
         temperature=0.0,
         max_tokens=max_tokens,
     )
+    if usage_sink is not None:
+        usage = getattr(response, "usage", None)
+        usage_sink.append(
+            {
+                "model": settings.llm_model,
+                "prompt_tokens": int(getattr(usage, "prompt_tokens", 0) or 0),
+                "completion_tokens": int(getattr(usage, "completion_tokens", 0) or 0),
+                "total_tokens": int(getattr(usage, "total_tokens", 0) or 0),
+            }
+        )
     content = (response.choices[0].message.content or "").strip()
     return _extract_json(content)
 
