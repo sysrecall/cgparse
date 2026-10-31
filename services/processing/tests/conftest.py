@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from types import SimpleNamespace
 
 import pytest
+from app_core.models.text_chunk import EMBEDDING_DIM
 from app_core.testing import (
     apply_migrations,
     configure_test_env,
@@ -110,6 +111,12 @@ def pipeline_env(db_session_factory, monkeypatch):
         pipeline,
         "run_extraction",
         lambda text, structured_columns=None: calls.extraction,
+    )
+    # Embeddings are a provider call too: keep the suite offline and deterministic.
+    monkeypatch.setattr(
+        pipeline,
+        "embed_passages",
+        lambda texts: [[0.01] * EMBEDDING_DIM for _ in texts],
     )
     return SimpleNamespace(
         storage=storage,

@@ -9,11 +9,12 @@ Data flow:
   parse    -> writes document_pages (paged sources) + text_chunks (all sources)
   extract  -> reads text back from DB, runs heuristics + LLM, writes extraction
   validate -> six rules, writes validation_results, sets final status
-  index    -> verifies chunk coverage (embedding is deferred; FTS is a generated col)
+  index    -> embeds chunks into text_chunks.embedding for semantic search
 """
 
 import uuid
 
+from app_core.clients.embeddings import embed_passages
 from app_core.clients.storage import download
 from app_core.db import session_scope
 from app_core.models.document import Document
@@ -24,7 +25,7 @@ from app_core.models.line_item import LineItem
 from app_core.models.processing_event import ProcessingEvent
 from app_core.models.text_chunk import TextChunk
 from app_core.models.validation_result import ValidationResult
-from app_core.settings import get_processing_settings
+from app_core.settings import get_embedding_settings, get_processing_settings
 from celery import chain
 from sqlalchemy import select
 
@@ -301,20 +302,38 @@ def validate_document(self, document_id: str) -> str:
 
 @celery_app.task(bind=True, base=_PipelineTask, name="processing.index_document", queue="llm")
 def index_document(self, document_id: str) -> str:
-    """Embeddings are deferred; FTS is a generated column, so chunks are already
-    searchable. This stage verifies coverage and closes the pipeline."""
+    """Embed every chunk so semantic search can reach it.
+
+    The keyword index needs nothing here — ``content_tsv`` is a generated column
+    written by Postgres on insert — so this stage only writes vectors. It is
+    idempotent: a reprocess overwrites each chunk's vector in place.
+    """
     doc_id = uuid.UUID(document_id)
     try:
         with session_scope() as session:
             doc = _get_document(session, doc_id)
             if doc is None:
                 return document_id
-            count = session.scalar(
-                select(TextChunk.id).where(TextChunk.document_id == doc_id).limit(1)
-            )
-            if count is None:
+            _log_event(session, doc_id, "index", "started")
+
+            chunks = session.scalars(
+                select(TextChunk).where(TextChunk.document_id == doc_id).order_by(TextChunk.id)
+            ).all()
+            if not chunks:
                 raise ValueError("index stage found no chunks")
-            _log_event(session, doc_id, "index", "ok", "fts-ready (embeddings deferred)")
+
+            vectors = embed_passages([chunk.content for chunk in chunks])
+            for chunk, vector in zip(chunks, vectors, strict=True):
+                chunk.embedding = vector
+
+            settings = get_embedding_settings()
+            _log_event(
+                session,
+                doc_id,
+                "index",
+                "ok",
+                f"chunks={len(chunks)} model={settings.model} dims={settings.dimensions}",
+            )
     except Exception as exc:
         with session_scope() as session:
             _fail(session, doc_id, "index", exc)

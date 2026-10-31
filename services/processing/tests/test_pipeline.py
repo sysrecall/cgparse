@@ -8,7 +8,7 @@ from app_core.models.document_page import DocumentPage
 from app_core.models.extraction import Extraction
 from app_core.models.line_item import LineItem
 from app_core.models.processing_event import ProcessingEvent
-from app_core.models.text_chunk import TextChunk
+from app_core.models.text_chunk import EMBEDDING_DIM, TextChunk
 from app_core.models.validation_result import ValidationResult
 from app_core.schemas.extraction import ExtractionOut
 from app_core.testing import default_fields, field
@@ -348,6 +348,85 @@ def test_index_requires_chunks(pipeline_env, document_factory, db_session, fresh
     pipeline.index_document.run(str(document.id))
 
     assert ("index", "ok") in events(fresh, document.id)
+
+
+@pytest.mark.db
+def test_index_writes_one_embedding_per_chunk(
+    pipeline_env, document_factory, db_session, fresh
+):
+    document = document_factory()
+    add_chunks(db_session, document, contents=("Total: 110.00", "VAT: 10.00", "Net: 100.00"))
+
+    pipeline.index_document.run(str(document.id))
+
+    with fresh() as session:
+        chunks = (
+            session.query(TextChunk)
+            .filter(TextChunk.document_id == document.id)
+            .order_by(TextChunk.id)
+            .all()
+        )
+        event = (
+            session.query(ProcessingEvent)
+            .filter(ProcessingEvent.document_id == document.id)
+            .filter(ProcessingEvent.stage == "index")
+            .filter(ProcessingEvent.status == "ok")
+            .one()
+        )
+
+    assert len(chunks) == 3
+    assert all(chunk.embedding is not None for chunk in chunks)
+    assert all(len(chunk.embedding) == EMBEDDING_DIM for chunk in chunks)
+    assert event.status == "ok"
+    assert "model=" in (event.detail or "")
+    assert "dims=1536" in (event.detail or "")
+
+
+@pytest.mark.db
+def test_index_is_idempotent_on_reprocess(
+    pipeline_env, document_factory, db_session, monkeypatch, fresh
+):
+    document = document_factory()
+    add_chunks(db_session, document)
+
+    pipeline.index_document.run(str(document.id))
+
+    # A second run must overwrite the vector, not duplicate the chunk.
+    monkeypatch.setattr(
+        pipeline,
+        "embed_passages",
+        lambda texts: [[0.02] * EMBEDDING_DIM for _ in texts],
+    )
+    pipeline.index_document.run(str(document.id))
+
+    with fresh() as session:
+        chunks = session.query(TextChunk).filter(TextChunk.document_id == document.id).all()
+    assert len(chunks) == 1
+    assert chunks[0].embedding is not None
+    assert pytest.approx(chunks[0].embedding[0], abs=1e-6) == 0.02
+
+
+@pytest.mark.db
+def test_index_failure_marks_the_document_failed(
+    pipeline_env, document_factory, db_session, monkeypatch, fresh
+):
+    from app_core.clients.embeddings import EmbeddingError
+
+    document = document_factory()
+    add_chunks(db_session, document)
+
+    def boom(_texts):
+        raise EmbeddingError("provider down")
+
+    monkeypatch.setattr(pipeline, "embed_passages", boom)
+
+    with pytest.raises(EmbeddingError):
+        pipeline.index_document.run(str(document.id))
+
+    with fresh() as session:
+        stored = session.get(Document, document.id)
+    assert stored.status == "failed"
+    assert stored.failure_reason.startswith("index: EmbeddingError")
 
 
 @pytest.mark.db
