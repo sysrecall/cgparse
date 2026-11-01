@@ -3,9 +3,13 @@
 AI-powered ingestion, extraction, validation and search of financial documents
 (PDF · JPG · PNG · XLSX · XLS · CSV).
 
-Design decisions live in [`../ARCHITECTURE.md`](../ARCHITECTURE.md) (kept outside
-the code repo together with the original brief); the implemented system is
-diagrammed in [`docs/architecture.md`](docs/architecture.md).
+**Live:** [Web UI](https://cgparse.vercel.app) ·
+[API](https://cgparse.onrender.com) ([docs](https://cgparse.onrender.com/docs) ·
+[health](https://cgparse.onrender.com/health))
+— the free API instance sleeps when idle, so the first request after a pause can
+take ~30 s to wake.
+
+The implemented system is diagrammed in [`docs/architecture.md`](docs/architecture.md).
 
 ---
 
@@ -125,16 +129,6 @@ cd apps/web && pnpm dev
 
 Set `NEXT_PUBLIC_API_URL` in `apps/web/.env.local` if the API is not on
 `http://localhost:8000`.
-
-## Live deployment
-
-A working instance runs on free tiers:
-
-- **Web UI** — <https://cgparse.vercel.app>
-- **API** — <https://cgparse.onrender.com> (docs at `/docs`, health at `/health`)
-
-The free API instance sleeps when idle, so the first request after a pause can
-take ~30 s to wake.
 
 ---
 

@@ -2,8 +2,7 @@
 
 Diagrams are [Mermaid](https://mermaid.js.org/) — GitHub renders them inline; in an
 editor use the Mermaid preview. Everything here describes the **implemented**
-system in this repository, not an aspirational design. Design rationale lives in
-the project brief (`../ARCHITECTURE.md`, kept outside the repo).
+system in this repository, not an aspirational design.
 
 - [1. System architecture](#1-system-architecture)
 - [2. Processing pipeline](#2-processing-pipeline)
