@@ -1,6 +1,6 @@
 # Evaluation report — document intelligence pipeline
 
-- **Generated:** 2026-10-31T21:36:08+00:00
+- **Generated:** 2026-11-01T07:16:04+00:00
 - **Model:** `nvidia/nemotron-3.5-bolt-e4b` (LLM pass enabled)
 - **Embeddings:** `nvidia/nemotron-3.5-embed-1b at 1536 dims` (index stage)
 - **Corpus:** 31 documents from `seed/eval/`
@@ -19,8 +19,8 @@
 | Line-item recall | 1.0000 |
 | Line-item precision | 1.0000 |
 | Validation rule F1 | 1.0000 |
-| Wall time | 186.27 s (0.1664 docs/s) |
-| LLM tokens | 23118 total, 745.7 / doc |
+| Wall time | 185.0 s (0.1676 docs/s) |
+| LLM tokens | 23280 total, 751.0 / doc |
 
 ## 2. Field extraction
 
@@ -73,12 +73,12 @@ Micro precision **1.0000**, recall **1.0000**, F1 **1.0000** (TP 7, FP 0, FN 0).
 
 | Stage | n | p50 (s) | p95 (s) |
 |---|---|---|---|
-| parse | 31 | 2.06 | 5.67 |
-| extract | 29 | 6.54 | 7.72 |
-| validate | 29 | 1.75 | 2.38 |
-| index | 29 | 2.01 | 2.52 |
+| parse | 31 | 2.03 | 5.50 |
+| extract | 29 | 6.34 | 7.50 |
+| validate | 29 | 1.75 | 2.54 |
+| index | 29 | 2.03 | 2.52 |
 
-Per-document total: p50 12.49 s · p95 16.01 s · max 16.50 s.
+Per-document total: p50 12.37 s · p95 15.56 s · max 16.70 s.
 
 ## 6. Per-document results
 
