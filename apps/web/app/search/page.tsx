@@ -230,8 +230,9 @@ export default function SearchPage() {
           ) : null}
 
           <p className="mt-3 text-[12.5px] text-muted">
-            Keyword search is live. Semantic search is coming soon — results
-            currently come from full-text matching and filenames.
+            {semantic
+              ? "Hybrid ranking: full-text matches fused with the nearest embedding chunks, so paraphrases surface too."
+              : "Keyword search over document text and filenames. Turn on Semantic to also match paraphrases."}
           </p>
         </div>
       </PageHeader>

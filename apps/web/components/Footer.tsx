@@ -93,7 +93,7 @@ export function Footer() {
           <p>© 2026 CareGuide all rights reserved.</p>
           <p className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-success" />
-            Keyword search live · Semantic search coming soon
+            Keyword and hybrid semantic search live
           </p>
         </div>
       </div>
