@@ -4,6 +4,7 @@ Normalizes whatever the SDK returns into our PageParse shape:
     {"pages": [{"page_number": int, "text": str, "confidence": float | None}]}
 """
 
+import re
 import tempfile
 from collections import defaultdict
 from pathlib import Path
@@ -56,7 +57,7 @@ def _normalize(result: object) -> dict:
     pages: dict[int, dict] = defaultdict(lambda: {"page_number": 0, "text": [], "confidence": []})
 
     for element in getattr(result, "elements", None) or []:
-        text = getattr(element, "text", None)
+        text = _element_text(element)
         if not text:
             continue
         conf = getattr(getattr(element, "confidence", None), "score", None)
@@ -85,3 +86,55 @@ def _normalize(result: object) -> dict:
             }
         )
     return {"pages": out}
+
+
+def _element_text(element: object) -> str:
+    """Text for one layout block.
+
+    PaddleOCR-VL returns tables as ``kind="table"`` blocks with an **empty**
+    ``text``: the content lives in ``cells`` (and a duplicate ``html``). Reading
+    only ``text`` therefore dropped every table -- which on an invoice is the
+    line items *and* the totals block, so extraction saw a document with no
+    amounts. Rebuild the table as rows so the text and the LLM both see it.
+    """
+    text = getattr(element, "text", None)
+    if text:
+        return text
+    if getattr(element, "kind", None) == "table":
+        return _table_text(element)
+    return ""
+
+
+def _table_text(element: object) -> str:
+    cells = getattr(element, "cells", None) or []
+    rows: dict[int, list[tuple[int, str]]] = defaultdict(list)
+    for cell in cells:
+        value = (getattr(cell, "text", None) or "").strip()
+        if not value:
+            continue
+        row = getattr(cell, "row_index", 0) or 0
+        column = getattr(cell, "column_index", 0) or 0
+        rows[row].append((column, value))
+
+    if rows:
+        return "\n".join(" | ".join(value for _, value in sorted(rows[row])) for row in sorted(rows))
+
+    # No structured cells: fall back to the HTML the provider also returns.
+    html = getattr(element, "html", None)
+    return _strip_html(html) if html else ""
+
+
+def _strip_html(html: str) -> str:
+    """Flatten a table's HTML into one row per <tr> and one cell per <td>."""
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", html, flags=re.DOTALL | re.IGNORECASE)
+    if not rows:
+        return re.sub(r"<[^>]+>", " ", html).strip()
+    lines = []
+    for row in rows:
+        cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, flags=re.DOTALL | re.IGNORECASE)
+        values = [re.sub(r"<[^>]+>", " ", cell).strip() for cell in cells]
+        values = [re.sub(r"\s+", " ", value) for value in values if value]
+        if values:
+            lines.append(" | ".join(values))
+    return "\n".join(lines)
+
