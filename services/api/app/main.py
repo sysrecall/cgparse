@@ -20,6 +20,23 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
 
 
+def _cors_origins(raw: str) -> list[str]:
+    """Parse API_CORS_ORIGINS into exact origins.
+
+    Browsers never put a trailing slash on the ``Origin`` header, and Starlette
+    compares origins as exact strings, so a configured ``https://app.example/``
+    silently rejects every request from ``https://app.example``. Strip the slash
+    (and stray whitespace/empty entries) here rather than relying on the deploy
+    config to be perfect.
+    """
+    origins: list[str] = []
+    for candidate in raw.split(","):
+        origin = candidate.strip().rstrip("/")
+        if origin and origin not in origins:
+            origins.append(origin)
+    return origins
+
+
 def create_app() -> FastAPI:
     settings = get_api_settings()
     app = FastAPI(
@@ -30,7 +47,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
+        allow_origins=_cors_origins(settings.cors_origins),
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
