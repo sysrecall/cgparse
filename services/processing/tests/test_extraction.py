@@ -134,12 +134,50 @@ def test_llm_values_are_normalized_by_the_contract(monkeypatch):
         ),
     )
 
-    result = extraction.extract("No heuristics in this text")
+    result = extraction.extract("Amount due: 1,200.50")
 
     assert result.invoice_date.value == "2026-10-05"
     assert result.subtotal.value == 1200.5
     assert len(result.line_items) == 1
     assert result.line_items[0].amount == 20.0
+
+
+def test_llm_money_not_present_in_the_text_is_discarded(monkeypatch):
+    """OCR can drop the totals block; the model must not fill the gap."""
+    monkeypatch.setattr(
+        extraction,
+        "complete_json",
+        lambda system, user: llm_payload(
+            subtotal={"value": 960.0, "confidence": 0.8},
+            tax={"value": 21.56, "confidence": 0.9},
+            total={"value": 981.56, "confidence": 0.8},
+        ),
+    )
+
+    result = extraction.extract("Taxable 345.00\nTax rate 6.250%\nTax due 21.56\nOther")
+
+    assert result.subtotal.value is None
+    assert result.total.value is None
+    assert result.tax.value == 21.56  # this one is in the text
+    assert result.subtotal.confidence == 0.0
+    assert result.total.confidence == 0.0
+
+
+def test_llm_money_is_grounded_across_formatting(monkeypatch):
+    monkeypatch.setattr(
+        extraction,
+        "complete_json",
+        lambda system, user: llm_payload(
+            subtotal={"value": 1284.0, "confidence": 0.9},
+            total={"value": 1284.0, "confidence": 0.9},
+        ),
+    )
+
+    result = extraction.extract("Amounts: 1,284.00 and 1284")
+
+    assert result.subtotal.value == 1284.0
+    assert result.total.value == 1284.0
+    assert result.subtotal.source == "llm"
 
 
 def test_document_confidence_averages_only_present_fields(monkeypatch):

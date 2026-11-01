@@ -4,7 +4,7 @@ import hashlib
 import re
 
 from app_core.clients.llm import complete_json
-from app_core.schemas.extraction import ExtractionOut, FieldOut
+from app_core.schemas.extraction import ExtractionOut, FieldOut, money_to_float
 
 # Regex heuristics tolerate , : ; | tab separators between label and value.
 # NOTE: alternation order matters (longest-first), and money/total patterns need
@@ -73,6 +73,29 @@ def heuristic_conflict_key(extraction: ExtractionOut) -> str | None:
     return hashlib.sha256(f"{supplier}||{number}".encode()).hexdigest()
 
 
+_NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _money_tokens(text: str) -> set[str]:
+    """Every numeric token in the source, normalized to two decimals.
+
+    Used to check that an LLM-supplied amount is actually present in the text.
+    Comparing normalized forms (not raw strings) keeps ``$1,284.00`` and
+    ``1284`` equivalent.
+    """
+    tokens: set[str] = set()
+    for match in _NUMBER_RE.finditer(text):
+        value = money_to_float(match.group(0))
+        if value is not None:
+            tokens.add(f"{value:.2f}")
+    return tokens
+
+
+def _money_is_grounded(value: object, tokens: set[str]) -> bool:
+    parsed = money_to_float(value)
+    return parsed is not None and f"{parsed:.2f}" in tokens
+
+
 def extract(text: str, structured_columns: list[str] | None = None) -> ExtractionOut:
     """Two-pass extraction on the document text.
 
@@ -84,6 +107,7 @@ def extract(text: str, structured_columns: list[str] | None = None) -> Extractio
     heuristics = heuristic_pass(text)
 
     llm = _llm_pass(text, structured_columns)
+    money_tokens = _money_tokens(text)
 
     merged: dict[str, FieldOut] = {}
     for field in ("invoice_number", "invoice_date", "supplier_name", "customer_name",
@@ -93,8 +117,14 @@ def extract(text: str, structured_columns: list[str] | None = None) -> Extractio
         if heuristic is not None and heuristic.value is not None:
             merged[field] = heuristic  # boxed evidence beats generation
         elif llm_field.value is not None:
-            llm_field.source = "llm"
-            merged[field] = llm_field
+            # Money must appear in the source. An OCR pass that drops the totals
+            # block otherwise lets the model fill the gap with a plausible number,
+            # which is worse than null: it looks confident and it is wrong.
+            if field in MONEY_FIELDS and not _money_is_grounded(llm_field.value, money_tokens):
+                merged[field] = FieldOut()
+            else:
+                llm_field.source = "llm"
+                merged[field] = llm_field
         else:
             merged[field] = FieldOut()  # explicit null + 0.0 — never invented
 
