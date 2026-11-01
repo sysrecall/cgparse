@@ -43,7 +43,7 @@ services/processing/   Celery workers: parse/OCR → LLM extraction → validate
 apps/web/              Next.js 16 UI (upload, progress, review, search)
 seed/                  sample + labeled evaluation corpora
 scripts/               make_samples.py, make_eval_dataset.py, evaluate.py
-docs/                  architecture + schema diagrams, evaluation report, metrics, AI disclosure
+docs/                  architecture + schema diagrams, evaluation report, metrics, test results, AI disclosure
 ```
 
 `app-core` is the contract both services share; the API **never** imports worker
@@ -166,6 +166,9 @@ Run the whole thing (with the dev DB exported):
 ```bash
 for p in packages/app-core services/processing services/api; do (cd $p && uv run pytest); done
 ```
+
+Latest recorded results — counts, durations, environment, lint and web build —
+are in [`docs/test_results.md`](docs/test_results.md).
 
 ### Lint
 
