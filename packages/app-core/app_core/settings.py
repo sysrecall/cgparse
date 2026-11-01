@@ -46,6 +46,13 @@ class ProcessingSettings(BaseSettings):
         default="",
         validation_alias=AliasChoices("PROC_OPENPARSER_API_KEY", "OPENPARSER_API_KEY"),
     )
+    # Any hosted OpenParser model id. The request shape is identical for every
+    # hosted model (only `ocr_options` differ, and we send none), so switching is
+    # one env var. PaddleOCR-VL stays the default because it is what the
+    # evaluation corpus was measured with; other ids include mistral-ocr-4-1,
+    # mistral-ocr-4, mistral-ocr-3, azure-di-layout, azure-di-read,
+    # google-docai-ocr, aws-textract-layout and aws-textract-tables-layout.
+    openparser_model: str = "paddleocr-vl-1.6"
     llm_api_key: str = Field(
         default="",
         validation_alias=AliasChoices("PROC_LLM_API_KEY", "LLM_API_KEY"),

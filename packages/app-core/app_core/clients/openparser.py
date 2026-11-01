@@ -1,6 +1,8 @@
-"""OpenParser (hosted PaddleOCR-VL) provider — the sole OCR engine for v1.
+"""OpenParser hosted-OCR provider — the only OCR engine for v1.
 
-Normalizes whatever the SDK returns into our PageParse shape:
+The model is configurable (``PROC_OPENPARSER_MODEL``); PaddleOCR-VL is the
+default because the evaluation corpus was measured with it. Normalizes whatever
+the SDK returns into our PageParse shape:
     {"pages": [{"page_number": int, "text": str, "confidence": float | None}]}
 """
 
@@ -11,7 +13,7 @@ from pathlib import Path
 
 from app_core.settings import get_processing_settings
 
-OCR_MODEL = "paddleocr-vl-1.6"
+DEFAULT_OCR_MODEL = "paddleocr-vl-1.6"
 
 # Extensions OpenParser accepts directly (PDF/PNG/JPEG)
 SUPPORTED_SUFFIXES = {".pdf", ".png", ".jpg", ".jpeg"}
@@ -34,10 +36,11 @@ def parse_document(data: bytes, filename: str) -> dict:
         raise OpenParserError(f"OpenParser accepts PDF/PNG/JPEG only, got {suffix!r}")
 
     client = OpenParserClient(api_key=settings.openparser_api_key)
+    model = (settings.openparser_model or "").strip() or DEFAULT_OCR_MODEL
     with tempfile.NamedTemporaryFile(suffix=suffix, delete=True) as tmp:
         tmp.write(data)
         tmp.flush()
-        result = client.parse.sync({"ocr_model": OCR_MODEL}, file=Path(tmp.name))
+        result = client.parse.sync({"ocr_model": model}, file=Path(tmp.name))
 
     # Sync wait expired -> SDK returns a durable job reference; poll it.
     if not _has_pages(result) and getattr(result, "id", None):

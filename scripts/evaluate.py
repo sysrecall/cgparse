@@ -552,6 +552,8 @@ def _embedding_header() -> str:
 
 
 def render_report(metadata: dict, metrics: dict, results: list[dict]) -> str:
+    from app_core.clients.openparser import DEFAULT_OCR_MODEL
+
     fields = metrics["fields"]
     lines = metrics["line_items"]
     validation = metrics["validation"]
@@ -562,6 +564,7 @@ def render_report(metadata: dict, metrics: dict, results: list[dict]) -> str:
     out.append("# Evaluation report — document intelligence pipeline\n")
     out.append(f"- **Generated:** {metadata['generated_at']}")
     out.append(f"- **Model:** `{metadata['model']}` (LLM pass {'enabled' if metadata['llm'] else 'disabled'})")
+    out.append(f"- **OCR:** `{metadata.get('ocr_model', DEFAULT_OCR_MODEL)}` (parse stage)")
     out.append(f"- **Embeddings:** `{_embedding_header()}` (index stage)")
     out.append(f"- **Corpus:** {status['total']} documents from `seed/eval/`")
     out.append(f"- **Workers:** {metadata['workers']} · **Database:** dedicated Supabase dev project")
@@ -673,7 +676,8 @@ def render_report(metadata: dict, metrics: dict, results: list[dict]) -> str:
         "  moves a document to review on its own).\n"
         "- Heuristic dates are literal evidence: a non-ISO date (e.g. `MM/DD/YYYY`) is kept\n"
         "  verbatim and flagged by `type_and_format` rather than auto-converted.\n"
-        "- OCR (PaddleOCR-VL) and the LLM are nondeterministic providers; reruns can move\n"
+        f"- OCR (`{metadata.get('ocr_model', DEFAULT_OCR_MODEL)}`) and the LLM are "
+        "nondeterministic providers; reruns can move\n"
         "  per-document results by a small amount.\n"
     )
     return "\n".join(out)
@@ -746,6 +750,7 @@ def main() -> None:
     metadata = {
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "model": get_processing_settings().llm_model,
+        "ocr_model": get_processing_settings().openparser_model,
         "llm": not args.no_llm,
         "workers": args.workers,
         "corpus": len(records),

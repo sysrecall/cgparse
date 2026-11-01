@@ -70,7 +70,7 @@ def parse_pdf_digital(data: bytes, filename: str) -> list[dict]:
 
 
 def parse_via_ocr(data: bytes, filename: str) -> list[dict]:
-    """Scanned PDF / image -> hosted PaddleOCR-VL via OpenParser."""
+    """Scanned PDF / image -> hosted OCR via OpenParser (PROC_OPENPARSER_MODEL)."""
     result = openparser_parse(data, filename)
     return [
         {
