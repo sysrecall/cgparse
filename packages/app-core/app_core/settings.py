@@ -31,6 +31,11 @@ class ApiSettings(BaseSettings):
     jwt_expires_minutes: int = 60
     cors_origins: str = "http://localhost:3000"
     max_upload_mb: int = 200
+    # Cosine-similarity floor for the vector half of hybrid search. The embedding
+    # model's scale is compressed -- relevant text scores ~0.14-0.35 and unrelated
+    # text ~0.05-0.08 -- so an absolute floor is model-specific: retune it if
+    # EMBED_MODEL changes. Unrelated queries still top out below this value.
+    search_min_similarity: float = 0.10
 
 
 class ProcessingSettings(BaseSettings):

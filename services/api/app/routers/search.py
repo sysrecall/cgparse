@@ -6,6 +6,8 @@ Result shape: one entry per document carrying the best matching snippets.
 below content hits). `semantic=true` embeds the query, pulls the nearest chunks
 from pgvector, and fuses both lists with reciprocal rank fusion — exact tokens
 (invoice numbers, supplier names) come from FTS, paraphrases from the vectors.
+Vector neighbours below `API_SEARCH_MIN_SIMILARITY` are dropped, because a
+nearest-neighbour query otherwise returns every indexed document.
 """
 
 from datetime import datetime
@@ -17,6 +19,7 @@ from app_core.db import session_scope
 from app_core.models.document import Document
 from app_core.models.enums import DocumentStatus
 from app_core.models.extraction import Extraction
+from app_core.settings import get_api_settings
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import Numeric, cast, func, select, text
@@ -101,12 +104,19 @@ def _fts_hits(db: Session, q: str) -> dict[str, dict]:
     return hits
 
 
-def _vector_hits(db: Session, q: str, limit: int = VECTOR_CANDIDATES) -> dict[str, dict]:
+def _vector_hits(
+    db: Session, q: str, min_similarity: float, limit: int = VECTOR_CANDIDATES
+) -> dict[str, dict]:
     """Nearest chunks by cosine distance, grouped by document.
 
     The query embedding is asymmetric (`input_type="query"`); passages were
     embedded with `input_type="passage"`. Chunks without a vector (documents
     indexed before embeddings existed) are skipped rather than scoring as zero.
+
+    Chunks below ``min_similarity`` are dropped: without a floor every indexed
+    document comes back for every query, because a nearest-neighbour query always
+    has an answer. The filter is applied in SQL so the LIMIT only counts real
+    candidates.
     """
     vector = embed_query(q)
     literal = "[" + ",".join(f"{value:.8f}" for value in vector) + "]"
@@ -121,11 +131,12 @@ def _vector_hits(db: Session, q: str, limit: int = VECTOR_CANDIDATES) -> dict[st
                    1 - (tc.embedding <=> CAST(:vec AS vector)) AS score
             FROM text_chunks tc
             WHERE tc.embedding IS NOT NULL
+              AND 1 - (tc.embedding <=> CAST(:vec AS vector)) >= :min_similarity
             ORDER BY tc.embedding <=> CAST(:vec AS vector)
             LIMIT :limit
             """
         ),
-        {"vec": literal, "limit": limit},
+        {"vec": literal, "limit": limit, "min_similarity": min_similarity},
     ).mappings()
 
     hits: dict[str, dict] = {}
@@ -210,7 +221,8 @@ def search(
 
     if semantic:
         try:
-            hits = _fuse(hits, _vector_hits(db, q))
+            floor = get_api_settings().search_min_similarity
+            hits = _fuse(hits, _vector_hits(db, q, floor))
         except EmbeddingError as exc:
             raise HTTPException(
                 status_code=503,

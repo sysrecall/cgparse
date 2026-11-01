@@ -15,6 +15,14 @@ def _one_hot(position: int) -> list[float]:
     return vector
 
 
+def _similar(position: int, similarity: float) -> list[float]:
+    """Unit vector whose cosine similarity to ``_one_hot(position)`` is ``similarity``."""
+    vector = [0.0] * EMBEDDING_DIM
+    vector[position] = similarity
+    vector[position + 1] = (1 - similarity**2) ** 0.5
+    return vector
+
+
 def _add_chunk(db_session, document, content, *, chunk_type="row", meta=None, embedding=None):
     db_session.add(
         TextChunk(
@@ -214,7 +222,7 @@ def test_semantic_search_ranks_by_vector_similarity(
     near = document_factory(original_filename="near.csv")
     far = document_factory(original_filename="far.csv")
     _add_chunk(db_session, near, "office supplies invoice", embedding=_one_hot(0))
-    _add_chunk(db_session, far, "hydraulic pump invoice", embedding=_one_hot(1))
+    _add_chunk(db_session, far, "hydraulic pump invoice", embedding=_similar(0, 0.4))
 
     monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
 
@@ -223,6 +231,25 @@ def test_semantic_search_ranks_by_vector_similarity(
     assert body["semantic"] is True
     assert [item["id"] for item in body["items"]] == [str(near.id), str(far.id)]
     assert body["items"][0]["rank"] > body["items"][1]["rank"]
+
+
+@pytest.mark.db
+def test_semantic_search_drops_neighbours_below_the_similarity_floor(
+    client, db_session, document_factory, monkeypatch
+):
+    from app.routers import search
+
+    match = document_factory(original_filename="match.csv")
+    noise = document_factory(original_filename="noise.csv")
+    _add_chunk(db_session, match, "paper supplies invoice", embedding=_one_hot(0))
+    _add_chunk(db_session, noise, "hydraulic pump invoice", embedding=_similar(0, 0.04))
+
+    monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
+
+    body = client.get(URL, params={"q": "paper", "semantic": "true"}).json()
+
+    assert [item["id"] for item in body["items"]] == [str(match.id)]
+    assert body["total"] == 1
 
 
 @pytest.mark.db
@@ -264,6 +291,23 @@ def test_keyword_mode_ignores_embeddings(
 
 
 @pytest.mark.db
+def test_similarity_floor_never_drops_keyword_hits(
+    client, db_session, document_factory, monkeypatch
+):
+    """The floor only trims the vector list; exact tokens still come from FTS."""
+    from app.routers import search
+
+    keyword_only = document_factory(original_filename="keyword.csv")
+    _add_chunk(db_session, keyword_only, "widget row", embedding=_similar(0, 0.01))
+
+    monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
+
+    body = client.get(URL, params={"q": "widget", "semantic": "true"}).json()
+
+    assert [item["id"] for item in body["items"]] == [str(keyword_only.id)]
+
+
+@pytest.mark.db
 def test_semantic_search_still_honours_status_filter(
     client, db_session, document_factory, monkeypatch
 ):
@@ -272,7 +316,7 @@ def test_semantic_search_still_honours_status_filter(
     validated = document_factory(original_filename="a.csv", status="validated")
     review = document_factory(original_filename="b.csv", status="needs_review")
     _add_chunk(db_session, validated, "widget one", embedding=_one_hot(0))
-    _add_chunk(db_session, review, "widget two", embedding=_one_hot(1))
+    _add_chunk(db_session, review, "widget two", embedding=_similar(0, 0.8))
 
     monkeypatch.setattr(search, "embed_query", lambda _text: _one_hot(0))
 
