@@ -2,11 +2,21 @@
 
 import json
 import re
+import time
 from functools import lru_cache
 
-from openai import OpenAI
+from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAI
 
 from app_core.settings import get_processing_settings
+
+MAX_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 1.0
+
+# Transient provider failures worth a second try. 404 is normally a hard "model
+# not found", but this provider returns it spuriously under load -- measured at
+# 1 in 5 calls on an otherwise healthy model -- and a retry clears it.
+RETRYABLE_STATUS = frozenset({404, 408, 409, 429, 500, 502, 503, 504})
+RETRYABLE_ERRORS = (APIConnectionError, APITimeoutError, APIStatusError)
 
 
 @lru_cache
@@ -28,15 +38,23 @@ def set_usage_sink(sink: list[dict] | None) -> None:
 def complete_json(system: str, user: str, max_tokens: int = 2000) -> dict:
     """Chat completion expected to return a JSON object. Raises on unusable output."""
     settings = get_processing_settings()
-    response = get_llm_client().chat.completions.create(
-        model=settings.llm_model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=0.0,
-        max_tokens=max_tokens,
-    )
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        try:
+            response = get_llm_client().chat.completions.create(
+                model=settings.llm_model,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                temperature=0.0,
+                max_tokens=max_tokens,
+            )
+            break
+        except RETRYABLE_ERRORS as exc:
+            retryable = not isinstance(exc, APIStatusError) or exc.status_code in RETRYABLE_STATUS
+            if not retryable or attempt == MAX_ATTEMPTS:
+                raise
+            time.sleep(RETRY_BACKOFF_SECONDS * attempt)
     if usage_sink is not None:
         usage = getattr(response, "usage", None)
         usage_sink.append(
