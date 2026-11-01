@@ -126,6 +126,16 @@ cd apps/web && pnpm dev
 Set `NEXT_PUBLIC_API_URL` in `apps/web/.env.local` if the API is not on
 `http://localhost:8000`.
 
+## Live deployment
+
+A working instance runs on free tiers:
+
+- **Web UI** — <https://cgparse.vercel.app>
+- **API** — <https://cgparse.onrender.com> (docs at `/docs`, health at `/health`)
+
+The free API instance sleeps when idle, so the first request after a pause can
+take ~30 s to wake.
+
 ---
 
 ## Tests
