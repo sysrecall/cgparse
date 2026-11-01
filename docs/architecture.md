@@ -45,7 +45,7 @@ flowchart TB
     end
 
     subgraph PROVIDERS["Hosted AI providers"]
-        OCR["OpenParser<br/>paddleocr-vl-1.6"]
+        OCR["OpenParser<br/>hosted OCR<br/>(PROC_OPENPARSER_MODEL)"]
         LLM["NVIDIA NIM<br/>nvidia/nemotron-3.5-bolt-e4b"]
     end
 
@@ -164,7 +164,7 @@ sequenceDiagram
     alt source_kind = pdf and text layer present
         PA->>PA: pdfplumber (no AI)
     else source_kind = image, or scanned pdf
-        PA->>O: PaddleOCR-VL
+        PA->>O: ocr_model (env-configured)
         O-->>PA: pages + confidence
     else spreadsheet / csv
         PA->>PA: pandas / openpyxl (no AI)

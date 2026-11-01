@@ -1,7 +1,8 @@
 # Evaluation report — document intelligence pipeline
 
-- **Generated:** 2026-11-01T07:16:04+00:00
+- **Generated:** 2026-11-01T10:11:37+00:00
 - **Model:** `nvidia/nemotron-3.5-bolt-e4b` (LLM pass enabled)
+- **OCR:** `paddleocr-vl-1.6` (parse stage)
 - **Embeddings:** `nvidia/nemotron-3.5-embed-1b at 1536 dims` (index stage)
 - **Corpus:** 31 documents from `seed/eval/`
 - **Workers:** 4 · **Database:** dedicated Supabase dev project
@@ -19,8 +20,8 @@
 | Line-item recall | 1.0000 |
 | Line-item precision | 1.0000 |
 | Validation rule F1 | 1.0000 |
-| Wall time | 185.0 s (0.1676 docs/s) |
-| LLM tokens | 23280 total, 751.0 / doc |
+| Wall time | 181.46 s (0.1708 docs/s) |
+| LLM tokens | 23192 total, 748.1 / doc |
 
 ## 2. Field extraction
 
@@ -73,12 +74,12 @@ Micro precision **1.0000**, recall **1.0000**, F1 **1.0000** (TP 7, FP 0, FN 0).
 
 | Stage | n | p50 (s) | p95 (s) |
 |---|---|---|---|
-| parse | 31 | 2.03 | 5.50 |
-| extract | 29 | 6.34 | 7.50 |
-| validate | 29 | 1.75 | 2.54 |
-| index | 29 | 2.03 | 2.52 |
+| parse | 31 | 2.03 | 5.91 |
+| extract | 29 | 6.01 | 9.55 |
+| validate | 29 | 1.70 | 2.45 |
+| index | 29 | 1.98 | 2.31 |
 
-Per-document total: p50 12.37 s · p95 15.56 s · max 16.70 s.
+Per-document total: p50 12.21 s · p95 15.39 s · max 15.60 s.
 
 ## 6. Per-document results
 
@@ -133,5 +134,5 @@ Per-document total: p50 12.37 s · p95 15.56 s · max 16.70 s.
   moves a document to review on its own).
 - Heuristic dates are literal evidence: a non-ISO date (e.g. `MM/DD/YYYY`) is kept
   verbatim and flagged by `type_and_format` rather than auto-converted.
-- OCR (PaddleOCR-VL) and the LLM are nondeterministic providers; reruns can move
+- OCR (`paddleocr-vl-1.6`) and the LLM are nondeterministic providers; reruns can move
   per-document results by a small amount.

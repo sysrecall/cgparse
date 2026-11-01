@@ -1,7 +1,8 @@
 {
   "metadata": {
-    "generated_at": "2026-11-01T07:16:04+00:00",
+    "generated_at": "2026-11-01T10:11:37+00:00",
     "model": "nvidia/nemotron-3.5-bolt-e4b",
+    "ocr_model": "paddleocr-vl-1.6",
     "llm": true,
     "workers": 4,
     "corpus": 31
@@ -214,42 +215,42 @@
     ]
   },
   "timing": {
-    "wall_seconds": 185.0,
+    "wall_seconds": 181.46,
     "documents": 31,
-    "throughput_docs_per_second": 0.1676,
+    "throughput_docs_per_second": 0.1708,
     "per_stage_seconds": {
       "parse": {
         "count": 31,
-        "p50": 2.03,
-        "p95": 5.503
+        "p50": 2.032,
+        "p95": 5.905
       },
       "extract": {
         "count": 29,
-        "p50": 6.342,
-        "p95": 7.496
+        "p50": 6.015,
+        "p95": 9.555
       },
       "validate": {
         "count": 29,
-        "p50": 1.746,
-        "p95": 2.535
+        "p50": 1.704,
+        "p95": 2.452
       },
       "index": {
         "count": 29,
-        "p50": 2.03,
-        "p95": 2.515
+        "p50": 1.979,
+        "p95": 2.305
       }
     },
     "per_document_seconds": {
-      "p50": 12.37,
-      "p95": 15.558,
-      "max": 16.697
+      "p50": 12.205,
+      "p95": 15.386,
+      "max": 15.603
     },
     "llm_tokens": {
       "calls": 29,
-      "prompt_tokens": 15889,
+      "prompt_tokens": 15801,
       "completion_tokens": 7391,
-      "total_tokens": 23280,
-      "tokens_per_document": 751.0
+      "total_tokens": 23192,
+      "tokens_per_document": 748.1
     }
   },
   "documents": [
@@ -310,10 +311,10 @@
         }
       ],
       "timings": {
-        "parse": 2.3387214599997606,
-        "extract": 6.512483260999943,
-        "validate": 1.762118162999741,
-        "index": 2.0626284700001634
+        "parse": 2.35154145100023,
+        "extract": 6.014552577998984,
+        "validate": 1.6968383670009644,
+        "index": 2.0252045939996606
       },
       "error": null
     },
@@ -362,10 +363,10 @@
         }
       ],
       "timings": {
-        "parse": 1.4806584000002658,
-        "extract": 6.477878292000241,
-        "validate": 1.7494449289997647,
-        "index": 2.1088430489999155
+        "parse": 1.4693048179997277,
+        "extract": 6.160606629999165,
+        "validate": 1.683758727998793,
+        "index": 1.945985541000482
       },
       "error": null
     },
@@ -419,6 +420,12 @@
       ],
       "actual_line_items": [
         {
+          "description": "Rivets",
+          "quantity": 1000.0,
+          "unit_price": 0.12,
+          "amount": 120.0
+        },
+        {
           "description": "Steel brackets",
           "quantity": 200.0,
           "unit_price": 3.5,
@@ -429,19 +436,13 @@
           "quantity": 500.0,
           "unit_price": 0.08,
           "amount": 40.0
-        },
-        {
-          "description": "Rivets",
-          "quantity": 1000.0,
-          "unit_price": 0.12,
-          "amount": 120.0
         }
       ],
       "timings": {
-        "parse": 2.4639601499998207,
-        "extract": 7.495641146000253,
-        "validate": 1.742798436999692,
-        "index": 2.5147803849999946
+        "parse": 2.473095535000539,
+        "extract": 6.84228942899972,
+        "validate": 1.6889843479984847,
+        "index": 2.304852249999385
       },
       "error": null
     },
@@ -489,23 +490,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Insulation tape roll",
-          "quantity": 50.0,
-          "unit_price": 50.0,
-          "amount": 2500.0
-        },
-        {
           "description": "Copper wire spool",
           "quantity": 25.0,
           "unit_price": 80.0,
           "amount": 2000.0
+        },
+        {
+          "description": "Insulation tape roll",
+          "quantity": 50.0,
+          "unit_price": 50.0,
+          "amount": 2500.0
         }
       ],
       "timings": {
-        "parse": 2.306901420000031,
-        "extract": 6.691596592000224,
-        "validate": 1.7452724259997012,
-        "index": 2.088917766999657
+        "parse": 2.330373494000014,
+        "extract": 6.245530987000166,
+        "validate": 1.706632242001433,
+        "index": 2.181949051999254
       },
       "error": null
     },
@@ -554,10 +555,10 @@
         }
       ],
       "timings": {
-        "parse": 1.600722395000048,
-        "extract": 5.789393447000293,
-        "validate": 1.894338953999977,
-        "index": 2.047919087000082
+        "parse": 1.538775181001256,
+        "extract": 5.209780969000349,
+        "validate": 1.8134233199998562,
+        "index": 1.9658707170001435
       },
       "error": null
     },
@@ -610,10 +611,10 @@
         }
       ],
       "timings": {
-        "parse": 1.6065797759997622,
-        "extract": 5.862993678000294,
-        "validate": 1.9235041870001623,
-        "index": 1.8315926240002227
+        "parse": 1.5341660100002628,
+        "extract": 5.154615370000101,
+        "validate": 1.8721373090011184,
+        "index": 1.917587022000589
       },
       "error": null
     },
@@ -666,10 +667,10 @@
         }
       ],
       "timings": {
-        "parse": 1.617341968999881,
-        "extract": 5.8655799379998825,
-        "validate": 1.8944007179998152,
-        "index": 2.1140984850003406
+        "parse": 1.531034264999107,
+        "extract": 9.788850296999954,
+        "validate": 1.832349203999911,
+        "index": 1.9789921390001837
       },
       "error": null
     },
@@ -704,10 +705,10 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 1.62756407400002,
-        "extract": 5.22798214300019,
-        "validate": 1.7439523959997132,
-        "index": 1.8388044759999502
+        "parse": 1.5313486969989754,
+        "extract": 4.374127692000911,
+        "validate": 1.6959898389995942,
+        "index": 2.1769643080006063
       },
       "error": null
     },
@@ -761,12 +762,6 @@
       ],
       "actual_line_items": [
         {
-          "description": "Brass fitting",
-          "quantity": 5.0,
-          "unit_price": 20.0,
-          "amount": 100.0
-        },
-        {
           "description": "Aluminium sheet",
           "quantity": 20.0,
           "unit_price": 30.0,
@@ -777,13 +772,19 @@
           "quantity": 15.0,
           "unit_price": 40.0,
           "amount": 600.0
+        },
+        {
+          "description": "Brass fitting",
+          "quantity": 5.0,
+          "unit_price": 20.0,
+          "amount": 100.0
         }
       ],
       "timings": {
-        "parse": 3.334857263000231,
-        "extract": 7.796754161000081,
-        "validate": 1.7380857080001988,
-        "index": 2.2976963080000132
+        "parse": 3.153177667001728,
+        "extract": 6.933389375999468,
+        "validate": 1.8289906230002089,
+        "index": 2.2614592730005825
       },
       "error": null
     },
@@ -831,23 +832,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Screwdriver set",
-          "quantity": 20.0,
-          "unit_price": 18.5,
-          "amount": 370.0
-        },
-        {
           "description": "Hammer",
           "quantity": 30.0,
           "unit_price": 12.0,
           "amount": 360.0
+        },
+        {
+          "description": "Screwdriver set",
+          "quantity": 20.0,
+          "unit_price": 18.5,
+          "amount": 370.0
         }
       ],
       "timings": {
-        "parse": 2.21294041200008,
-        "extract": 6.959397065999838,
-        "validate": 1.7476816689995758,
-        "index": 1.9970177499999409
+        "parse": 2.3149544230000174,
+        "extract": 9.47368647499934,
+        "validate": 1.6863539770001807,
+        "index": 2.1282957080002234
       },
       "error": null
     },
@@ -908,10 +909,10 @@
         }
       ],
       "timings": {
-        "parse": 2.3762834369999837,
-        "extract": 6.952104780999889,
-        "validate": 2.6758592000001045,
-        "index": 2.4730949119998513
+        "parse": 2.469532359000368,
+        "extract": 6.034289728000658,
+        "validate": 2.451990805000605,
+        "index": 2.3189957150007103
       },
       "error": null
     },
@@ -963,23 +964,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Part A",
-          "quantity": 1.0,
-          "unit_price": 60.0,
-          "amount": 60.0
-        },
-        {
           "description": "Part B",
           "quantity": 1.0,
           "unit_price": 30.0,
           "amount": 30.0
+        },
+        {
+          "description": "Part A",
+          "quantity": 1.0,
+          "unit_price": 60.0,
+          "amount": 60.0
         }
       ],
       "timings": {
-        "parse": 1.8765950570000314,
-        "extract": 6.878490855000109,
-        "validate": 2.5353460399996948,
-        "index": 2.016856850000295
+        "parse": 1.5575792899999215,
+        "extract": 7.282749048001278,
+        "validate": 2.4611587319996033,
+        "index": 2.000932240000111
       },
       "error": null
     },
@@ -1032,10 +1033,10 @@
         }
       ],
       "timings": {
-        "parse": 1.5695205359998,
-        "extract": 5.882278997999947,
-        "validate": 1.9019911479999791,
-        "index": 2.0207615110002735
+        "parse": 1.3880958139998256,
+        "extract": 5.250736017998861,
+        "validate": 1.8220153139991453,
+        "index": 1.9446610579998378
       },
       "error": null
     },
@@ -1084,10 +1085,10 @@
         }
       ],
       "timings": {
-        "parse": 1.4227114669997718,
-        "extract": 5.723530711999956,
-        "validate": 1.7460510109999632,
-        "index": 1.9741264600002069
+        "parse": 1.5422976410009142,
+        "extract": 5.8022827160002635,
+        "validate": 1.6833891149999545,
+        "index": 1.9458415110002534
       },
       "error": null
     },
@@ -1135,23 +1136,23 @@
       ],
       "actual_line_items": [
         {
-          "description": "Bearing",
-          "quantity": 12.0,
-          "unit_price": 22.0,
-          "amount": 264.0
-        },
-        {
           "description": "Seal ring",
           "quantity": 24.0,
           "unit_price": 3.5,
           "amount": 84.0
+        },
+        {
+          "description": "Bearing",
+          "quantity": 12.0,
+          "unit_price": 22.0,
+          "amount": 264.0
         }
       ],
       "timings": {
-        "parse": 1.5817049779998342,
-        "extract": 6.675337202000264,
-        "validate": 1.729092018999836,
-        "index": 2.016811401999803
+        "parse": 1.695367123998949,
+        "extract": 6.604667215000518,
+        "validate": 1.6754192150001472,
+        "index": 2.006863100999908
       },
       "error": null
     },
@@ -1212,10 +1213,10 @@
         }
       ],
       "timings": {
-        "parse": 1.9294692440003018,
-        "extract": 6.6828361799998675,
-        "validate": 1.7460602830001335,
-        "index": 2.0115325809997557
+        "parse": 1.8801377379986661,
+        "extract": 7.573889227998734,
+        "validate": 1.7158936640007596,
+        "index": 1.9772524460004206
       },
       "error": null
     },
@@ -1264,10 +1265,10 @@
         }
       ],
       "timings": {
-        "parse": 1.7223999299999377,
-        "extract": 5.379937865000102,
-        "validate": 1.7366354400001,
-        "index": 1.991065171000173
+        "parse": 1.7375228330001846,
+        "extract": 5.337235450000662,
+        "validate": 1.7148360339997453,
+        "index": 1.976032237000254
       },
       "error": null
     },
@@ -1340,10 +1341,10 @@
         }
       ],
       "timings": {
-        "parse": 2.0204199900003914,
-        "extract": 6.9112013049998495,
-        "validate": 1.746772645999954,
-        "index": 2.0597348420001254
+        "parse": 2.0373325719992863,
+        "extract": 7.798619013999996,
+        "validate": 1.7256180629992741,
+        "index": 2.0253656129989395
       },
       "error": null
     },
@@ -1404,10 +1405,10 @@
         }
       ],
       "timings": {
-        "parse": 2.02953744000024,
-        "extract": 6.211390431000382,
-        "validate": 1.7380288950002978,
-        "index": 2.008422961999713
+        "parse": 2.032513107000341,
+        "extract": 5.845015270000658,
+        "validate": 1.6966527709992079,
+        "index": 2.0094375850003416
       },
       "error": null
     },
@@ -1460,10 +1461,10 @@
         }
       ],
       "timings": {
-        "parse": 1.7160670799999025,
-        "extract": 5.464251519999834,
-        "validate": 1.905346009999903,
-        "index": 2.6048930439997093
+        "parse": 2.0386376719998225,
+        "extract": 9.555375268999342,
+        "validate": 1.869803272998979,
+        "index": 1.9218309370007773
       },
       "error": null
     },
@@ -1512,10 +1513,10 @@
         }
       ],
       "timings": {
-        "parse": 2.113101467999968,
-        "extract": 6.292172567000307,
-        "validate": 1.7262993829999687,
-        "index": 2.0175087920001715
+        "parse": 1.6967391460002546,
+        "extract": 6.290081683000608,
+        "validate": 1.6824446110003919,
+        "index": 1.9079460070006462
       },
       "error": null
     },
@@ -1568,10 +1569,10 @@
         }
       ],
       "timings": {
-        "parse": 2.0892679899998257,
-        "extract": 6.282203272000061,
-        "validate": 1.9023026840000057,
-        "index": 2.0577055359999576
+        "parse": 2.0353290919993015,
+        "extract": 5.75173893200008,
+        "validate": 1.8332748480006558,
+        "index": 1.9590472990003036
       },
       "error": null
     },
@@ -1624,10 +1625,10 @@
         }
       ],
       "timings": {
-        "parse": 2.091706752999926,
-        "extract": 6.341763981999975,
-        "validate": 1.9108569820000412,
-        "index": 2.0388842340003066
+        "parse": 2.0097238540001854,
+        "extract": 5.771157162000236,
+        "validate": 1.8247732410000026,
+        "index": 1.9285984210000606
       },
       "error": null
     },
@@ -1688,10 +1689,10 @@
         }
       ],
       "timings": {
-        "parse": 2.0811721390000457,
-        "extract": 7.206743762000315,
-        "validate": 1.7372471699995913,
-        "index": 2.0296214810000492
+        "parse": 2.0315185880008357,
+        "extract": 6.525639096000305,
+        "validate": 1.6751467730009608,
+        "index": 1.9726673429995571
       },
       "error": null
     },
@@ -1740,10 +1741,10 @@
         }
       ],
       "timings": {
-        "parse": 5.731269190000148,
-        "extract": 6.1190912089996345,
-        "validate": 1.7411271070000112,
-        "index": 1.9669311129996458
+        "parse": 6.475356719998672,
+        "extract": 5.204132664999634,
+        "validate": 1.6782259619994875,
+        "index": 1.9793472140008816
       },
       "error": null
     },
@@ -1804,10 +1805,10 @@
         }
       ],
       "timings": {
-        "parse": 5.672071402000256,
-        "extract": 7.278135515000031,
-        "validate": 1.7384186509998472,
-        "index": 2.00831941000024
+        "parse": 5.922126965000643,
+        "extract": 5.847088008000355,
+        "validate": 1.698466281999572,
+        "index": 2.0289930409999215
       },
       "error": null
     },
@@ -1856,10 +1857,10 @@
         }
       ],
       "timings": {
-        "parse": 5.2491447620000145,
-        "extract": 5.863052214000163,
-        "validate": 1.7437553919999118,
-        "index": 2.0347400959999504
+        "parse": 5.904658374000064,
+        "extract": 5.230395705000774,
+        "validate": 1.7042634510016796,
+        "index": 1.990374236000207
       },
       "error": null
     },
@@ -1920,10 +1921,10 @@
         }
       ],
       "timings": {
-        "parse": 5.502705139000227,
-        "extract": 6.654089112999827,
-        "validate": 1.746505468000123,
-        "index": 2.020248050999726
+        "parse": 4.739207593000174,
+        "extract": 5.967445639000289,
+        "validate": 1.6825511200004257,
+        "index": 1.9191185979998409
       },
       "error": null
     },
@@ -1972,10 +1973,10 @@
         }
       ],
       "timings": {
-        "parse": 5.417613105000328,
-        "extract": 5.812140591000116,
-        "validate": 1.7378996239999651,
-        "index": 2.0472538580002038
+        "parse": 5.193042058999708,
+        "extract": 5.123750921000465,
+        "validate": 1.6765053649996844,
+        "index": 1.9475469919998432
       },
       "error": null
     },
@@ -2010,7 +2011,7 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 1.7478794610001387
+        "parse": 1.681314626999665
       },
       "error": "parse: EmptyDataError: No columns to parse from file"
     },
@@ -2045,7 +2046,7 @@
       "expected_line_items": [],
       "actual_line_items": [],
       "timings": {
-        "parse": 1.7337997350000478
+        "parse": 1.6716515040006925
       },
       "error": "parse: EmptyDataError: No columns to parse from file"
     }

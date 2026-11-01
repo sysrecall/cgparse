@@ -18,7 +18,7 @@ The implemented system is diagrammed in [`docs/architecture.md`](docs/architectu
 1. **Upload** one or many files — magic-byte type sniffing, checksum dedupe, size limit.
 2. **Process** each file through a Celery chain:
    `route → parse → extract → validate → index`.
-   - `parse` — pdfplumber for digital PDFs, **OpenParser PaddleOCR-VL** for scans/images, pandas for CSV/XLSX. Writes per-page text + search chunks.
+   - `parse` — pdfplumber for digital PDFs, **OpenParser hosted OCR** for scans/images (PaddleOCR-VL by default; `PROC_OPENPARSER_MODEL` selects another model), pandas for CSV/XLSX. Writes per-page text + search chunks.
    - `extract` — **regex heuristics first** (deterministic, with match spans), then the **LLM** (NVIDIA NIM `nvidia/nemotron-3.5-bolt-e4b`) fills only what heuristics missed. Unknown values stay `null` with confidence `0.0` — never guessed.
    - `validate` — six rules: `missing_field`, `type_and_format`, `line_items_sum`, `subtotal_tax_total`, `negative_or_impossible_values`, `duplicate_invoice`. Any error → `needs_review`.
    - `index` — embeds every chunk into `text_chunks.embedding` (NVIDIA NIM `nvidia/nemotron-3.5-embed-1b`, requested at 1536 dims) so keyword and semantic search are both live; FTS itself is a generated column, so it needs no work here.
@@ -77,6 +77,12 @@ Copy `.env.example` to `.env` and fill it in. The variable groups:
 | API | `API_*` | services/api |
 | Processing | `PROC_*` (falls back to `OPENPARSER_API_KEY` / `LLM_API_KEY`) | services/processing |
 | Embeddings | `EMBED_*` (falls back to `PROC_LLM_API_KEY` / `LLM_BASE_URL`) | api **and** processing |
+
+The OCR model is chosen with `PROC_OPENPARSER_MODEL` (default `paddleocr-vl-1.6`).
+Any hosted OpenParser model works — `mistral-ocr-4-1`, `mistral-ocr-4`,
+`mistral-ocr-3`, `azure-di-layout`, `azure-di-read`, `google-docai-ocr`,
+`aws-textract-*` — and the request shape does not change. The evaluation numbers
+in `docs/metrics_report.md` were measured with the default.
 
 Integration tests and the evaluation harness need an **extra, dedicated Supabase
 dev project** via `TEST_DATABASE_URL`. It is aliased to `DATABASE_URL` inside the
@@ -219,7 +225,8 @@ deletes and re-inserts exactly those rows.
 
 [`docs/ai_usage.md`](docs/ai_usage.md) discloses both sides of AI in this project:
 the AI coding agent used to build it (with how its output was verified) and the
-runtime models — OpenParser `paddleocr-vl-1.6` for OCR and NVIDIA NIM
+runtime models — OpenParser hosted OCR, `paddleocr-vl-1.6` by default and
+configurable via `PROC_OPENPARSER_MODEL`, and NVIDIA NIM
 `nvidia/nemotron-3.5-bolt-e4b` for extraction — including the verbatim prompts, the
 anti-hallucination guardrails and the measured results.
 

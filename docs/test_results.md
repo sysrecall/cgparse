@@ -1,7 +1,7 @@
 # Test results
 
-Measured on **2026-11-01** against `main` at `94b7985` (which includes the
-semantic similarity floor).
+Measured on **2026-11-01** against `main` at `debe547` (which includes the
+semantic similarity floor, the configurable OCR model and the LLM provider retry).
 
 - **Python** 3.12.3 (local) · **uv** per-project environments
 - **Node** 22.22.3 · **pnpm** 11.5.0
@@ -15,10 +15,10 @@ so the DB tests are not skipped.
 
 | Suite | Tests | Result | Duration |
 |---|---|---|---|
-| `packages/app-core` | 44 | passed | 2.1 s |
-| `services/processing` | 77 | passed | 124 s |
+| `packages/app-core` | 47 | passed | 1.8 s |
+| `services/processing` | 86 | passed | 117 s |
 | `services/api` | 70 | passed | 364 s |
-| **Total** | **191** | **191 passed, 0 failed, 0 skipped** | ~8 min |
+| **Total** | **203** | **203 passed, 0 failed, 0 skipped** | ~8 min |
 
 Durations are dominated by real network round-trips to the dev database; they
 move with connection latency and are not a performance claim.
@@ -42,6 +42,9 @@ above include them.
 |---|---|
 | Extraction contract | absent fields stay `null`/`0.0`, money and dates are coerced, LLM money not present in the source is discarded, heuristic values win over the LLM |
 | Parsers | CSV quoting/ragged rows, XLSX empty cells and multi-line cells, digital-vs-scanned PDF routing, OCR page normalization (including tables rebuilt from cells/HTML) |
+| OCR client | configured `PROC_OPENPARSER_MODEL` reaches the request, blank value falls back to the default, missing key and unsupported suffix fail before upload |
+| LLM client | transient provider errors (404/429/5xx, connection, timeout) retried, hard errors surfaced immediately, usage recorded once per successful call |
+| Settings | `PROC_*` and `EMBED_*` namespaces stay separate; defaults hold |
 | Validation | all six rules, severity → `validated` / `needs_review` routing |
 | Pipeline (DB) | stage idempotency, failure marking, human-edit preservation, chain dispatch |
 | Ingest (DB) | magic-byte sniffing, size/empty limits, per-file 202 isolation, checksum dedupe, duplicate rollback |
@@ -78,5 +81,6 @@ uv run --project services/processing python scripts/evaluate.py --workers 4
 Latest run (31 documents): **24 validated · 5 needs_review · 2 failed**,
 expected-status accuracy **1.0000**, macro field accuracy **0.9957**,
 line-item precision/recall **1.0000**, validation F1 **1.0000**, wall time
-**185 s**. Full tables, per-document results and raw numbers:
+**181 s**. The two failures are the deliberate empty-file cases on the corrupt
+CSVs. Full tables, per-document results and raw numbers:
 [`metrics_report.md`](metrics_report.md) and [`metrics.json`](metrics.json).
