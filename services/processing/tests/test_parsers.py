@@ -65,6 +65,22 @@ def test_parse_csv_rejects_empty_input():
         parsers.parse_csv(b"", "empty.csv")
 
 
+def test_parse_csv_labels_a_second_table_after_a_preamble():
+    data = (
+        b"Invoice Number,Supplier,Subtotal,Total\n"
+        b"INV-1,Acme,100.00,110.00\n"
+        b"Item,Qty,Amount\n"
+        b"Widget,2,50.00\n"
+    )
+    chunks = parsers.parse_csv(data, "preamble.csv")
+
+    assert [c["content"] for c in chunks] == [
+        "Invoice Number: INV-1; Supplier: Acme; Subtotal: 100.00; Total: 110.00",
+        "Item: Widget; Qty: 2; Amount: 50.00",
+    ]
+    assert chunks[1]["meta"]["columns"] == ["Item", "Qty", "Amount"]
+
+
 def test_parse_xlsx_reads_every_sheet():
     data = _xlsx_bytes(
         {
@@ -84,6 +100,30 @@ def test_parse_xlsx_skips_empty_rows():
     data = _xlsx_bytes({"Sheet1": [["a", "b"], [1, None], [None, None], [2, 3]]})
     chunks = parsers.parse_xlsx(data, "rows.xlsx")
     assert [c["content"] for c in chunks] == ["a: 1", "a: 2; b: 3"]
+
+
+def test_parse_xlsx_combines_a_key_value_preamble_into_one_chunk():
+    data = _xlsx_bytes(
+        {
+            "Invoice": [
+                ["Invoice Number", "INV-1", None, None],
+                ["Supplier", "Acme", None, None],
+                [None, None, None, None],
+                ["Item", "Qty", "Unit Price", "Amount"],
+                ["Steel brackets", 200, 3.5, 700],
+            ]
+        }
+    )
+    chunks = parsers.parse_xlsx(data, "mixed.xlsx")
+
+    # The preamble collapses to one chunk (detached "Supplier: Acme" lines embed
+    # poorly), and the buried item header is found so the row is labelled right.
+    assert [c["content"] for c in chunks] == [
+        "Invoice Number: INV-1; Supplier: Acme",
+        "Item: Steel brackets; Qty: 200; Unit Price: 3.5; Amount: 700",
+    ]
+    assert chunks[0]["meta"]["columns"] is None
+    assert chunks[1]["meta"]["columns"] == ["Item", "Qty", "Unit Price", "Amount"]
 
 
 def test_parse_pdf_digital_returns_one_chunk_per_page():
