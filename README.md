@@ -23,7 +23,7 @@ The implemented system is diagrammed in [`docs/architecture.md`](docs/architectu
    - `validate` — six rules: `missing_field`, `type_and_format`, `line_items_sum`, `subtotal_tax_total`, `negative_or_impossible_values`, `duplicate_invoice`. Any error → `needs_review`.
    - `index` — embeds every chunk into `text_chunks.embedding` (NVIDIA NIM `nvidia/nemotron-3.5-embed-1b`, requested at 1536 dims) so keyword and semantic search are both live; FTS itself is a generated column, so it needs no work here.
 3. **Review & correct** — the UI lists documents, shows extracted fields, line items, validation findings and the stage timeline; human edits are stamped `confidence=1.0 / source="human"` and survive reprocessing.
-4. **Search** — keyword full-text across chunk text + filename, or hybrid semantic search (`?semantic=true`) that fuses pgvector similarity with keyword rank via reciprocal rank fusion. Results are grouped one entry per document with the best snippets, and every filter applies to both modes.
+4. **Search** — keyword full-text across chunk text + filename, or hybrid semantic search (`?semantic=true`) that fuses pgvector similarity with keyword rank via reciprocal rank fusion. Vector neighbours below a similarity floor (`API_SEARCH_MIN_SIMILARITY`, `0.10` by default) are dropped, so nearest-neighbour lookup cannot return every indexed document; the floor never affects keyword hits. Results are grouped one entry per document with the best snippets, and every filter applies to both modes.
 
 ## Architecture
 
@@ -228,6 +228,9 @@ anti-hallucination guardrails and the measured results.
 - Semantic search needs an embedding key: without `EMBED_API_KEY` (or the shared
   NVIDIA key) `?semantic=true` returns `503`; documents indexed before embeddings
   existed have no vectors until reprocessed.
+- The semantic similarity floor is tuned to the current embedding model's scale
+  (relevant text scores ~0.14–0.35, unrelated text ~0.05–0.08). Changing
+  `EMBED_MODEL` means re-checking `API_SEARCH_MIN_SIMILARITY`.
 - TIFF is out of scope.
 - Negative line-item values can't be persisted (DB `CHECK`), so that rule is only
   exercised by unit tests.

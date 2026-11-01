@@ -41,7 +41,7 @@ raised as questions instead of being guessed.
 
 ### How AI output was verified
 
-- **189 automated tests** pass (44 app-core, 77 processing, 68 api), including
+- **191 automated tests** pass (44 app-core, 77 processing, 70 api), including
   DB-marked integration tests against a dedicated Supabase dev project.
 - **`ruff` clean** in all three Python projects and `scripts/`.
 - **Real-provider evaluation** over a 31-document labeled corpus — actual OCR and
@@ -87,7 +87,11 @@ Embeddings are called with no prompt: the same text that is already stored in
 `text_chunks` is sent as `input_type="passage"` by the worker's `index` stage, and
 the user's query is sent as `input_type="query"` by `GET /search?semantic=true`
 (the model is asymmetric, so the two input types must differ). Searches fuse the
-vector result list with the keyword list by reciprocal rank fusion.
+vector result list with the keyword list by reciprocal rank fusion, and drop
+vector neighbours below `API_SEARCH_MIN_SIMILARITY` (0.10). That floor is a
+property of the embedding model, not of the documents: this model's cosine scores
+are compressed (relevant text ~0.14–0.35, unrelated ~0.05–0.08), so the value is
+tuned to it and would need re-checking if the model changes.
 
 ### 2.1 OCR request
 

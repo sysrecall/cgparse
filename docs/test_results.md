@@ -1,7 +1,7 @@
 # Test results
 
-Measured on **2026-11-01** against `main` at `c76b260` (code identical to
-`99049ee`; only documentation changed afterwards).
+Measured on **2026-11-01** against `main` at `94b7985` (which includes the
+semantic similarity floor).
 
 - **Python** 3.12.3 (local) · **uv** per-project environments
 - **Node** 22.22.3 · **pnpm** 11.5.0
@@ -17,8 +17,8 @@ so the DB tests are not skipped.
 |---|---|---|---|
 | `packages/app-core` | 44 | passed | 2.1 s |
 | `services/processing` | 77 | passed | 124 s |
-| `services/api` | 68 | passed | 296 s |
-| **Total** | **189** | **189 passed, 0 failed, 0 skipped** | ~7 min |
+| `services/api` | 70 | passed | 364 s |
+| **Total** | **191** | **191 passed, 0 failed, 0 skipped** | ~8 min |
 
 Durations are dominated by real network round-trips to the dev database; they
 move with connection latency and are not a performance claim.
@@ -46,7 +46,7 @@ above include them.
 | Pipeline (DB) | stage idempotency, failure marking, human-edit preservation, chain dispatch |
 | Ingest (DB) | magic-byte sniffing, size/empty limits, per-file 202 isolation, checksum dedupe, duplicate rollback |
 | API (DB) | list/filter/pagination, detail and pages, corrections, reprocess, FTS + hybrid search, grouping, CORS origin normalization |
-| Embeddings | request shape (model, dimensions, input type), provider failure → 503, `semantic=false` never calls the provider |
+| Embeddings | request shape (model, dimensions, input type), provider failure → 503, `semantic=false` never calls the provider, similarity floor drops weak neighbours without dropping keyword hits |
 
 Providers are replaced in unit tests (storage dict, recorded enqueues, list-backed
 pub/sub, monkeypatched LLM); the DB tests use the real schema. Real-provider
