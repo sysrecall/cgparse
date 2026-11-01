@@ -41,7 +41,7 @@ raised as questions instead of being guessed.
 
 ### How AI output was verified
 
-- **203 automated tests** pass (47 app-core, 86 processing, 70 api), including
+- **205 automated tests** pass (47 app-core, 88 processing, 70 api), including
   DB-marked integration tests against a dedicated Supabase dev project.
 - **`ruff` clean** in all three Python projects and `scripts/`.
 - **Real-provider evaluation** over a 31-document labeled corpus — actual OCR and

@@ -1,7 +1,8 @@
 # Test results
 
-Measured on **2026-11-01** against `main` at `debe547` (which includes the
-semantic similarity floor, the configurable OCR model and the LLM provider retry).
+Measured on **2026-11-01** against `main` at `256a06a` (which includes the
+semantic similarity floor, the configurable OCR model, the LLM provider retry
+and the spreadsheet chunker that labels rows without a header).
 
 - **Python** 3.12.3 (local) · **uv** per-project environments
 - **Node** 22.22.3 · **pnpm** 11.5.0
@@ -15,10 +16,10 @@ so the DB tests are not skipped.
 
 | Suite | Tests | Result | Duration |
 |---|---|---|---|
-| `packages/app-core` | 47 | passed | 1.8 s |
-| `services/processing` | 86 | passed | 117 s |
-| `services/api` | 70 | passed | 364 s |
-| **Total** | **203** | **203 passed, 0 failed, 0 skipped** | ~8 min |
+| `packages/app-core` | 47 | passed | 2.5 s |
+| `services/processing` | 88 | passed | 138 s |
+| `services/api` | 70 | passed | 244 s |
+| **Total** | **205** | **205 passed, 0 failed, 0 skipped** | ~7 min |
 
 Durations are dominated by real network round-trips to the dev database; they
 move with connection latency and are not a performance claim.
@@ -41,7 +42,7 @@ above include them.
 | Area | Representative tests |
 |---|---|
 | Extraction contract | absent fields stay `null`/`0.0`, money and dates are coerced, LLM money not present in the source is discarded, heuristic values win over the LLM |
-| Parsers | CSV quoting/ragged rows, XLSX empty cells and multi-line cells, digital-vs-scanned PDF routing, OCR page normalization (including tables rebuilt from cells/HTML) |
+| Parsers | CSV quoting/ragged rows, XLSX empty cells and multi-line cells, key/value preambles collapsed to one chunk, item tables found below a preamble and labelled correctly, digital-vs-scanned PDF routing, OCR page normalization (including tables rebuilt from cells/HTML) |
 | OCR client | configured `PROC_OPENPARSER_MODEL` reaches the request, blank value falls back to the default, missing key and unsupported suffix fail before upload |
 | LLM client | transient provider errors (404/429/5xx, connection, timeout) retried, hard errors surfaced immediately, usage recorded once per successful call |
 | Settings | `PROC_*` and `EMBED_*` namespaces stay separate; defaults hold |
